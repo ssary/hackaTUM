@@ -36,7 +36,7 @@ class FreeTextInputBox extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: const BorderSide(
-            color: AppColors.secondaryColor, // Green border when focused
+            color: AppColors.primaryColor, // Green border when focused
           ),
         ),
       ),

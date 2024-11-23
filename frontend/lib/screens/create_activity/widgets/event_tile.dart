@@ -14,7 +14,6 @@ class EventTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      double width = constraints.maxWidth;
       double height = constraints.maxHeight;
       double textHeight = height / 3;
       double imgHeight = height - textHeight;
@@ -52,6 +51,7 @@ class EventTile extends StatelessWidget {
                   title,
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
+                    color: AppColors.secondaryColor,
                     fontSize: 12.0,
                   ),
                 ),

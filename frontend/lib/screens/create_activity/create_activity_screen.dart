@@ -50,7 +50,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   final popularActivitiesList = [
     "Grab lunch",
     "Football",
-    "Bierpong match",
+    "Beerpong match",
     "Chess",
     "Jogging",
     "Calisthenics",
@@ -130,6 +130,20 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
             Expanded(
                 child: ElevatedButton(
               onPressed: () async {
+                if (currentIndex == 0) {
+                  if (_whatController.text.isNotEmpty) {
+                    context.go(AppRouting.home);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Please enter a description of the activity'),
+                      ),
+                    );
+                    return;
+                  }
+                }
+
                 if (currentIndex == 3) {
                   if (_formKey.currentState!.validate()) {
                     // Get location name from lat/lon
@@ -178,7 +192,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryColor, // Green button
+                backgroundColor: AppColors.primaryColor, // Green button
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
@@ -224,7 +238,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
         Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 26, 16, 16),
+            padding: const EdgeInsets.fromLTRB(12, 24, 16, 18),
             child: Row(
               children: [
                 IconButton(
@@ -238,13 +252,13 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(
+                const Text(
                   "Start Activity",
                   textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 32),
                 ),
               ],
             ),
@@ -309,7 +323,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 const Padding(
                   padding: EdgeInsets.fromLTRB(22, 20, 0, 14),
                   child: Text(
-                    "Events near you",
+                    "Something in mind?",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -332,78 +346,100 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   }
 
   Widget chooseWhereWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Title
-          Text(
-            "Select a Location",
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-          ),
-          const SizedBox(height: 20),
-// Map
-          Expanded(
-            child: FlutterMap(
-              options: MapOptions(
-                initialCenter: _selectedLocation ??
-                    LatLng(48.265454, 11.669124), // Default to Munich City
-                initialZoom: 15.0,
-                onTap: (tapPosition, point) {
-                  setState(() {
-                    _selectedLocation = point;
-                    _updateWhereController();
-                  });
-                },
-              ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 24, 16, 18),
+            child: Row(
               children: [
-                TileLayer(
-                  urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
+                IconButton(
+                  onPressed: () => {},
+                  icon: const Icon(
+                    Icons.arrow_back_outlined,
+                    color: Colors.black,
+                    size: 32,
+                  ),
                 ),
-                if (_selectedLocation != null)
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: _selectedLocation!,
-                        width: 40,
-                        height: 40,
-                        child: const Icon(
-                          Icons.location_pin,
-                          size: 40,
-                          color: Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                // Add a circle to show the search radius
-                if (_selectedLocation != null)
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
-                        point: _selectedLocation!,
-                        color: Colors.blue.withOpacity(0.3),
-                        borderStrokeWidth: 2,
-                        borderColor: Colors.blue,
-                        radius: _selectedRadius * 100,
-                      ),
-                    ],
-                  ),
+                const SizedBox(
+                  width: 8,
+                ),
+                const Text(
+                  "Select a Location",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 32),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
+        ),
+        Container(
+          color: const Color.fromARGB(255, 217, 217, 217),
+          height: 1,
+        ),
+        // Map
+        Expanded(
+          child: FlutterMap(
+            options: MapOptions(
+              initialCenter: _selectedLocation ??
+                  LatLng(48.265454, 11.669124), // Default to Munich City
+              initialZoom: 15.0,
+              onTap: (tapPosition, point) {
+                setState(() {
+                  _selectedLocation = point;
+                  _updateWhereController();
+                });
+              },
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
+              ),
+              if (_selectedLocation != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: _selectedLocation!,
+                      width: 40,
+                      height: 40,
+                      child: const Icon(
+                        Icons.location_pin,
+                        size: 40,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
 
-          // Radius selection
-          Column(
+              // Add a circle to show the search radius
+              if (_selectedLocation != null)
+                CircleLayer(
+                  circles: [
+                    CircleMarker(
+                      point: _selectedLocation!,
+                      color: Colors.blue.withOpacity(0.3),
+                      borderStrokeWidth: 2,
+                      borderColor: Colors.blue,
+                      radius: _selectedRadius * 100,
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+
+        // Radius selection
+        Padding(
+          padding: const EdgeInsets.fromLTRB(22, 22, 22, 22),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -425,19 +461,21 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+        ),
 
-          // Selected location display
-          TextField(
+        // Selected location display
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 5, 20, 20),
+          child: TextField(
             controller: _whereController,
             readOnly: true,
-            decoration: InputDecoration(
-              labelText: "Selected Location",
+            decoration: const InputDecoration(
+              labelText: "Selected Location:",
               border: OutlineInputBorder(),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
