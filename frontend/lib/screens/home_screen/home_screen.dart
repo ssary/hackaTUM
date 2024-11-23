@@ -50,6 +50,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: "Choose from past activities",
                   backgroundColor: AppColors.primaryColor,
                   onPressed: () {})
+
+              // make two big text with different fonts tpo check if it works
+              ,
+              Text(
+                "Hello",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "Hello",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
+              )
             ],
           ),
         ],
