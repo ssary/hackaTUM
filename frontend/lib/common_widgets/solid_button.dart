@@ -13,12 +13,14 @@ class SolidButton extends StatefulWidget {
   final Color? backgroundColor;
   final IconData? icon;
   final double? width;
+  final TextStyle? textStyle;
 
   const SolidButton(
       {super.key,
       required this.text,
       required this.onPressed,
       this.width,
+      this.textStyle,
       this.gradient,
       this.backgroundColor,
       this.leftMargin = 0,
@@ -52,7 +54,7 @@ class _SolidButtonState extends State<SolidButton> {
                   ],
                   gradient: widget.gradient,
                   color: widget.backgroundColor,
-                  borderRadius: BorderRadius.circular(Spacing.p16),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: ElevatedButton(
                     onPressed: widget.onPressed,
@@ -65,17 +67,18 @@ class _SolidButtonState extends State<SolidButton> {
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(Spacing.p32)),
+                          borderRadius: BorderRadius.circular(0)),
                     ),
                     child: Padding(
                         padding: const EdgeInsets.fromLTRB(
-                            Spacing.p16, Spacing.p8, Spacing.p16, Spacing.p8),
+                            0, Spacing.p16, 0, Spacing.p16),
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
                           Text(widget.text,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall!
-                                  .copyWith(color: Colors.white)),
+                              style: widget.textStyle ??
+                                  Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(color: Colors.white)),
                           hovered ? gapW16 : gapW8,
                           if (widget.icon != null)
                             Icon(

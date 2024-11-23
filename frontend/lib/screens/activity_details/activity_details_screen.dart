@@ -27,7 +27,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       body: Column(
         children: [
           Container(
-            height: 400,
+            height: 300,
             width: screenWidth,
             color: Colors.lightBlue,
             child: Text("Your activity"),

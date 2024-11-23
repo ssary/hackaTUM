@@ -50,9 +50,6 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('TypeForm Page'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
