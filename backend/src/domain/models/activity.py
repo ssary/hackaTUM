@@ -10,12 +10,12 @@ class ActivityLocation(BaseModel):
     radius: float
 
 class ActivityTimerange(BaseModel):
-    startTime: int
-    endTime: int
+    startTime: datetime
+    endTime: datetime
 
 class ActivityModel(BaseModel):
     description: str
-    minUsers: str
+    minUsers: int
     maxUsers: int
     timerange: ActivityTimerange
     location: ActivityLocation
