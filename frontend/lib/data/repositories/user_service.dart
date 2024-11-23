@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
   Future<UserModel?> loadUser(String uid) async {
+    print('Loading user with id: $uid');
     final url = Uri.parse('$baseUrl/user/$uid');
     try {
       final response = await http.get(url);
@@ -30,9 +31,9 @@ class UserService {
     final user = UserModel(
       uid: deviceId,
       name: 'Default Name', // Replace with your logic
-      avatarUrl: '',
+      avatarUrl: 'test',
       age: 0,
-      gender: 'unknown',
+      gender: 'male',
     );
 
     try {
@@ -50,7 +51,7 @@ class UserService {
         return null;
       }
     } catch (e) {
-      print('Error creating user: $e');
+      print('Error creating user: ${e.toString()}');
       return null;
     }
   }

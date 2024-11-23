@@ -171,7 +171,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                     }
                   }
                 }
-
                 _pageController.animateToPage(
                   currentIndex + 1,
                   duration: const Duration(milliseconds: 300),
