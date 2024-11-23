@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/common_widgets/join_activity_tile.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/routing/app_routing.dart';
@@ -20,11 +21,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<String> recommendedActivities = [
-    "Activity 1: Hiking",
-    "Activity 2: Painting",
-    "Activity 3: Cooking Class",
-    "Activity 4: Yoga Session",
-    "Activity 5: Photography Walk",
+    "Walk in Olympiapark",
+    "Cycle Tour",
+    "Cooking Class",
+    "Yoga Session",
+    "Photography Walk",
   ];
 
   @override
@@ -53,8 +54,58 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Widget startActivityButton(double screenWidth) {
+    double boxSize = screenWidth - 2 * 59;
+    return SizedBox(
+      width: boxSize,
+      height: boxSize,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(
+              color: Color.fromARGB(255, 217, 217, 217), width: 1.0),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: Stack(alignment: Alignment.center, children: [
+          Positioned(
+            bottom: 0,
+            child: IconButton(
+              onPressed: () {
+                context.replace(AppRouting.createActivity);
+              },
+              icon: Image.asset(
+                "people.gif",
+                width: boxSize * 0.9,
+                height: boxSize * 0.9,
+              ),
+              iconSize:
+                  boxSize * 0.8, // Ensure the button size matches the icon size
+            ),
+          ),
+          Positioned(
+            bottom: boxSize * 0.125,
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Start Activity',
+                  style: TextStyle(
+                      color: AppColors.primaryColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600),
+                ),
+                SizedBox(width: 8),
+                Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor),
+              ],
+            ),
+          )
+        ]),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Stack(
         children: [
@@ -84,17 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               gapH104,
-              IconButton(
-                onPressed: () {
-                  context.replace(AppRouting.createActivity);
-                },
-                icon: Image.asset(
-                  "people.gif",
-                  width: 300,
-                  height: 300,
-                ),
-                iconSize: 300, // Ensure the button size matches the icon size
-              ),
+              startActivityButton(screenWidth),
               gapH16,
               SolidButton(
                   text: "Choose from past activities",
@@ -124,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         SizedBox(
-          height: 100, // Fixed height for the carousel items
+          height: 132, // Fixed height for the carousel items
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: PageView.builder(
@@ -136,33 +177,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               itemBuilder: (context, index) {
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Container(
-                      width: constraints
-                          .maxWidth, // Dynamic width based on screen size
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.secondaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.secondaryColor,
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          recommendedActivities[index],
-                          textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                        ),
-                      ),
-                    );
+                return JoinActivityTile(
+                  title: recommendedActivities[index],
+                  location: "Munich",
+                  startTime: "15:00",
+                  endTime: "17:00",
+                  userProfilePicturePaths: const [
+                    "user.png",
+                    "user.png",
+                    "user.png",
+                  ],
+                  minParticipants: 3 + (index % 3),
+                  onJoin: () {
+                    // Navigate to activity details for the selected activity
+                    context.goNamed(AppRouting.activityDetails);
                   },
                 );
               },
