@@ -21,8 +21,8 @@ class ChoosePopularActivitiesWidget extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 16.0,
-        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 12.0,
+        mainAxisSpacing: 12.0,
         mainAxisExtent: 40.0,
       ),
       itemCount: activities.length,
@@ -38,18 +38,18 @@ class ChoosePopularActivitiesWidget extends StatelessWidget {
           },
 
           child: Container(
-            height: 40,
+            height: 33,
             decoration: BoxDecoration(
               color: AppColors.primaryColor.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(8.0),
             ),
             child: Center(
                 child: Text(
               activities[index],
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: const TextStyle(
+                  color: AppColors.primaryColor,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12),
             )),
           ), // Use the activity name as button text
         );
