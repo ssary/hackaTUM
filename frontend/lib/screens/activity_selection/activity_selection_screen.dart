@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/common_widgets/join_activity_tile.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/routing/app_routing.dart';
@@ -58,10 +59,21 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
                     shrinkWrap: true,
                     itemCount: 3,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text("Activity ${activties[index]}"),
-                        onTap: () {
-                          // Navigate to activity details
+                      //dynamic activity = activties[index];
+                      return JoinActivityTile(
+                        title: "Frisbee in the Park",
+                        location: "Luitpoldpark",
+                        startTime: "15:00",
+                        endTime: "17:00",
+                        userProfilePicturePaths: const [
+                          "user.png",
+                          "user.png",
+                          "user.png",
+                        ],
+                        minParticipants: 5,
+                        onJoin: () {
+                          // Navigate to activity details for the selected activity
+                          context.goNamed(AppRouting.activityDetails);
                         },
                       );
                     },
