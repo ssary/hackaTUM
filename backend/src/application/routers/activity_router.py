@@ -1,6 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Query
 from src.domain.models.activity import ActivityModel
-from src.domain.models.user import UserModel
 from src.application.services import activity_service
 from src.infrastructure.database import activity_collection, user_collection
 from bson import ObjectId
@@ -30,7 +29,7 @@ async def get_available_activities():
 @router.post("/")
 async def create_activity(activity: ActivityModel, created_by: str):
     # Check if the user exists
-    if not await user_collection.find_one({"_id": ObjectId(created_by)}):
+    if not await user_collection.find_one({"_id": created_by}):
         raise HTTPException(status_code=404, detail="User who created the activity not found")
     
     # Add the creator to the joinedUsers list
@@ -62,7 +61,7 @@ async def get_activity(activity_id: str):
     user_ids = activity.get("joinedUsers", [])
     users = []
     for user_id in user_ids:
-        user = await user_collection.find_one({"_id": ObjectId(user_id)})
+        user = await user_collection.find_one({"_id": user_id})
         if user:
             user["id"] = str(user["_id"])
             del user["_id"]
@@ -81,7 +80,7 @@ async def add_user_to_activity(activity_id: str, user_id: str):
         raise HTTPException(status_code=404, detail="Activity not found")
     
     # Check if user exists
-    user = await user_collection.find_one({"_id": ObjectId(user_id)})
+    user = await user_collection.find_one({"_id": user_id})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
