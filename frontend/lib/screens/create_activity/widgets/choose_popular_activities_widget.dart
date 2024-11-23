@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:frontend/theme/colors.dart';
 
 class ChoosePopularActivitiesWidget extends StatelessWidget {
+  TextEditingController whatController;
+  PageController pageController;
   final List<String> activities;
+  final int index;
 
-  ChoosePopularActivitiesWidget({required this.activities});
+  ChoosePopularActivitiesWidget(
+      {super.key,
+      required this.activities,
+      required this.whatController,
+      required this.index,
+      required this.pageController});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +29,12 @@ class ChoosePopularActivitiesWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            // Empty action for now
-            //TODO implement logic
+            whatController.text = activities[index];
+            pageController.animateToPage(
+              1,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
           },
 
           child: Container(

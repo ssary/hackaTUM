@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_popular_activities_widget.dart';
+import 'package:frontend/screens/create_activity/widgets/choose_when_widget.dart';
+import 'package:frontend/screens/create_activity/widgets/choose_who_widget.dart';
 import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 
 class CreateActivityScreen extends StatefulWidget {
   const CreateActivityScreen({super.key});
@@ -15,11 +19,21 @@ class CreateActivityScreen extends StatefulWidget {
 class _CreateActivityScreenState extends State<CreateActivityScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  final double _sidePadding = 16.0;
   // Controllers for the text fields
   final TextEditingController _whatController = TextEditingController();
-  final TextEditingController _whichController = TextEditingController();
-  final TextEditingController _whenController = TextEditingController();
-  final TextEditingController _whoController = TextEditingController();
+  final TextEditingController _whereController = TextEditingController();
+  final TextEditingController _whoMinController = TextEditingController();
+  final TextEditingController _whoMaxController = TextEditingController();
+
+  final TimeOfDay _selectedStartTime = TimeOfDay.now();
+  final TimeOfDay _selectedEndTime = TimeOfDay.fromDateTime(
+    DateTime.now().add(const Duration(hours: 1)),
+  );
+
+  double _selectedRadius = 0.0;
+
+  LatLng? _selectedLocation; // Stores the chosen location
 
   final popularActivitiesList = [
     "Play Table Tennis",
@@ -36,6 +50,14 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   ];
 
   int currentIndex = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _selectedLocation = LatLng(48.265454, 11.669124); // Default to Munich
+  }
 
   void _nextScreen() {
     setState(() {
@@ -61,9 +83,11 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   void dispose() {
     // Dispose of controllers when no longer needed
     _whatController.dispose();
-    _whichController.dispose();
-    _whenController.dispose();
-    _whoController.dispose();
+    _whereController.dispose();
+    _whoMinController.dispose();
+    _whoMaxController.dispose();
+    _pageController.dispose();
+
     super.dispose();
   }
 
@@ -71,8 +95,19 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
+    print(_whatController.text);
     return Scaffold(
-      body: _buildScreens(screenWidth)[currentIndex].withKey(currentIndex),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        children: _buildScreens(screenWidth).map((screen) {
+          return screen.withKey(currentIndex);
+        }).toList(),
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: // Back and Continue Buttons
@@ -84,7 +119,11 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                 if (currentIndex == 0) {
                   context.go(AppRouting.home);
                 } else {
-                  _previousScreen();
+                  _pageController.animateToPage(
+                    currentIndex - 1,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
                 }
               },
               icon: Container(
@@ -104,14 +143,39 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
             gapW16,
             Expanded(
                 child: ElevatedButton(
-              onPressed: _nextScreen,
+              onPressed: () {
+                if (currentIndex == 0) {
+                  // only continue if the user has selected an activity
+                  if (_whatController.text.isEmpty) {
+                    //show snack bar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please select an activity"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                }
+                if (currentIndex == 3) {
+                  if (_formKey.currentState!.validate()) {
+                    //TODO calculate recommendations and go to next screen
+                  }
+                }
+
+                _pageController.animateToPage(
+                  currentIndex + 1,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.secondaryColor, // Green button
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 48.0,
+                padding: EdgeInsets.symmetric(
+                  horizontal: _sidePadding,
                   vertical: 24.0,
                 ),
               ),
@@ -135,8 +199,14 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     return [
       chooseWhatWidget(screenWidth),
       chooseWhereWidget(),
-      chooseWhenWidget(),
-      chooseWhoWidget()
+      ChooseWhenWidget(
+        startTime: _selectedStartTime,
+        endTime: _selectedEndTime,
+      ),
+      ChooseWhoWidget(
+          minParticipantsController: _whoMinController,
+          maxParticipantsController: _whoMaxController,
+          formKey: _formKey),
     ];
   }
 
@@ -147,7 +217,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
       children: [
         // Title
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(_sidePadding),
           child: Text(
             "Start Activity",
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
@@ -166,7 +236,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
 
         // "Choose a popular activity" section
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(_sidePadding),
           child: Text(
             "Choose a popular activity",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -176,9 +246,12 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.fromLTRB(_sidePadding, 0, _sidePadding, 0),
           child: ChoosePopularActivitiesWidget(
             activities: popularActivitiesList,
+            index: currentIndex,
+            pageController: _pageController,
+            whatController: _whatController,
           ),
         ),
         gapH8,
@@ -191,7 +264,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         // "Attend an event near you" section
 
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(_sidePadding),
           child: recommendedEventsWidget(),
         ),
 
@@ -204,7 +277,8 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         const Spacer(),
         // "Have something in mind?" section
         Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+          padding:
+              EdgeInsets.fromLTRB(_sidePadding, _sidePadding, _sidePadding, 0),
           child: Text(
             "Have something in mind?",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -213,10 +287,11 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                 ),
           ),
         ),
-        gapH8,
+
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(_sidePadding),
           child: TextField(
+            controller: _whatController,
             decoration: InputDecoration(
               hintText: "Describe your activity",
               hintStyle: const TextStyle(color: Colors.grey),
@@ -243,54 +318,124 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   }
 
   Widget chooseWhereWidget() {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Title
           Text(
             "Select a Location",
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
+          ),
+          const SizedBox(height: 20),
+// Map
+          Expanded(
+            child: FlutterMap(
+              options: MapOptions(
+                initialCenter: _selectedLocation ??
+                    LatLng(48.265454, 11.669124), // Default to Munich City
+                initialZoom: 15.0,
+                onTap: (tapPosition, point) {
+                  setState(() {
+                    _selectedLocation = point;
+                    _updateWhereController();
+                  });
+                },
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  subdomains: ['a', 'b', 'c'],
+                ),
+                if (_selectedLocation != null)
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: _selectedLocation!,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
+                          Icons.location_pin,
+                          size: 40,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                // Add a circle to show the search radius
+                if (_selectedLocation != null)
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: _selectedLocation!,
+                        color: Colors.blue.withOpacity(0.3),
+                        borderStrokeWidth: 2,
+                        borderColor: Colors.blue,
+                        radius: _selectedRadius * 100,
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Radius selection
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Set Search Radius: ${_selectedRadius.toStringAsFixed(1)} km",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              Slider(
+                value: _selectedRadius,
+                min: 0.0,
+                max: 20.0,
+                divisions: 49,
+                label: "${_selectedRadius.toStringAsFixed(1)} km",
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRadius = value;
+                    _updateWhereController();
+                  });
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Selected location display
+          TextField(
+            controller: _whereController,
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: "Selected Location",
+              border: OutlineInputBorder(),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget chooseWhenWidget() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Select a Date and Time",
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget chooseWhoWidget() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Select Participants",
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-          ),
-        ],
-      ),
-    );
+  void _updateWhereController() {
+    if (_selectedLocation != null) {
+      _whereController.text =
+          "Lat: ${_selectedLocation!.latitude.toStringAsFixed(4)}, "
+          "Lng: ${_selectedLocation!.longitude.toStringAsFixed(4)} "
+          "(Radius: ${_selectedRadius.toStringAsFixed(1)} km)";
+    } else {
+      _whereController.text = "No location selected";
+    }
   }
 
   Widget recommendedEventsWidget() {
@@ -314,59 +459,69 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         ),
         itemCount: popularEventsList.length,
         itemBuilder: (context, index) {
-          return Container(
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.0),
-              border: Border.all(
-                color: const Color(0xFF705F8B), // Purple border
-              ),
-            ),
-            child: Column(
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12.0),
-                      topRight: Radius.circular(12.0),
-                    ),
-                    child: Image.asset(
-                      "event_image.png", // Make sure the path is correct
-                      height: 80,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
+          return GestureDetector(
+              onTap: () {
+                _whatController.text = popularEventsList[index];
+                _pageController.animateToPage(
+                  currentIndex + 1,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                  border: Border.all(
+                    color: const Color(0xFF705F8B), // Purple border
                   ),
                 ),
-                Flexible(
-                  flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceColor,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
-                      border: Border.all(
-                        color: const Color(0xFF705F8B), // Purple border
+                child: Column(
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12.0),
+                          topRight: Radius.circular(12.0),
+                        ),
+                        child: Image.asset(
+                          "event_image.png", // Make sure the path is correct
+                          height: 80,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      popularEventsList[index],
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.secondaryColor,
-                            fontWeight: FontWeight.bold,
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceColor,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(12),
+                            bottomRight: Radius.circular(12),
                           ),
-                      textAlign: TextAlign.center,
+                          border: Border.all(
+                            color: const Color(0xFF705F8B), // Purple border
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          popularEventsList[index],
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.secondaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          );
+              ));
         },
       )
     ]);
