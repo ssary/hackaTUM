@@ -1,4 +1,3 @@
-from openai import OpenAI
 import json
 
 def create_chat_completion(client, user_1_input, user_2_input):
