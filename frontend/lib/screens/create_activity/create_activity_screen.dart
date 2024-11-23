@@ -41,14 +41,18 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
     setState(() {
       if (currentIndex < _buildScreens(screenWidth).length - 1) {
         currentIndex++; // Go to the next screen
+        pressedNext = true;
       }
     });
   }
+
+  bool pressedNext = true;
 
   void _previousScreen() {
     setState(() {
       if (currentIndex > 0) {
         currentIndex--; // Go to the previous screen
+        pressedNext = false;
       }
     });
   }
@@ -68,48 +72,59 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
-        transitionBuilder: (child, animation) {
-          // Main animation for incoming page
-          final inAnimation = Tween<Offset>(
-            begin: const Offset(0.0, 1.0), // Slide in from the bottom
-            end: Offset.zero, // Land in position
-          ).animate(animation);
-
-          // Secondary animation for outgoing page
-          final outAnimation = Tween<Offset>(
-            begin: Offset.zero, // Start in position
-            end: const Offset(0.0, 1.0), // Slide up off-screen
-          ).animate(animation);
-
-          return SlideTransition(
-            position: animation.status == AnimationStatus.reverse
-                ? outAnimation
-                : inAnimation,
-            child: child,
-          );
-        },
-        child: _buildScreens(screenWidth)[currentIndex].withKey(currentIndex),
-      ),
+      body: _buildScreens(screenWidth)[currentIndex].withKey(currentIndex),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
+        child: // Back and Continue Buttons
+            Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Back Button
-            if (currentIndex > 0)
-              ElevatedButton(
-                onPressed: _previousScreen,
-                child: const Text("Back"),
+            IconButton(
+              onPressed: () {
+                if (currentIndex == 0) {
+                  context.go(AppRouting.home);
+                } else {
+                  _previousScreen();
+                }
+              },
+              icon: Container(
+                width: 58,
+                height: 58,
+                decoration: BoxDecoration(
+                  color: AppColors.secondaryColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: const Icon(
+                  Icons.arrow_back_outlined,
+                  color: AppColors.secondaryColor,
+                  size: 32,
+                ),
               ),
-            const Spacer(),
-            // Next Button
-            if (currentIndex < _buildScreens(screenWidth).length - 1)
-              ElevatedButton(
-                onPressed: _nextScreen,
-                child: const Text("Next"),
+            ),
+            gapW16,
+            Expanded(
+                child: ElevatedButton(
+              onPressed: _nextScreen,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondaryColor, // Green button
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 48.0,
+                  vertical: 24.0,
+                ),
               ),
+              child: const Text(
+                "Continue",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
+            )),
+            gapW8
           ],
         ),
       ),
@@ -223,54 +238,6 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
           ),
         ),
         gapH32,
-
-        // Back and Continue Buttons
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Container(
-                width: 58,
-                height: 58,
-                decoration: BoxDecoration(
-                  color: AppColors.secondaryColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_outlined,
-                  color: AppColors.secondaryColor,
-                  size: 32,
-                ),
-              ),
-            ),
-            gapW16,
-            Expanded(
-                child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryColor, // Green button
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 48.0,
-                  vertical: 24.0,
-                ),
-              ),
-              child: const Text(
-                "Continue",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
-            )),
-          ],
-        ),
       ],
     ));
   }
