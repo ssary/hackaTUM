@@ -1,10 +1,10 @@
 from datetime import datetime
 from src.infrastructure.database import activity_collection
 from bson import ObjectId
-from utils.openai_api_calls import create_chat_completion
-import openai
+from src.application.utils.openai_api_calls import create_chat_completion
 import os
 import random
+import openai
 
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 

@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from src.domain.models.activity import ActivityModel
 from src.domain.models.user import UserModel
+from src.application.services import activity_service
 from src.infrastructure.database import activity_collection, user_collection
 from bson import ObjectId
 from datetime import datetime
@@ -39,6 +40,16 @@ async def create_activity(activity: ActivityModel, created_by: str):
     # Insert the activity into the database
     result = await activity_collection.insert_one(activity_data)
     return {"id": str(result.inserted_id)}
+
+@router.get("/{activity_id}/similar")
+async def get_top_k_similar_activities(
+    activity_id: str, K: int = Query(5, description="Number of similar activities to return")
+):
+    """
+    Get the top K similar activities to the specified activity.
+    """
+    similar_activities = await activity_service.get_top_K_similar_activities(activity_id, K)
+    return similar_activities
 
 
 @router.get("/{activity_id}")
