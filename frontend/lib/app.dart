@@ -22,7 +22,7 @@ class MeetingApp extends StatelessWidget {
       supportedLocales: const [
         Locale('de', 'DE'),
       ],
-      theme: AppTheme.lightTheme,
+      theme: AppTheme().lightTheme,
       routerDelegate: AppRouting.router.routerDelegate,
       routeInformationParser: AppRouting.router.routeInformationParser,
       routeInformationProvider: AppRouting.router.routeInformationProvider,
