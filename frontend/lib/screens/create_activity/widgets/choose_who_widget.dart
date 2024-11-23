@@ -70,7 +70,8 @@ class _ChooseWhoWidgetState extends State<ChooseWhoWidget> {
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter a maximum number of participants.";
+                    value = "100";
+                    widget.maxParticipantsController.text = value;
                   }
                   final max = int.tryParse(value);
                   final min =

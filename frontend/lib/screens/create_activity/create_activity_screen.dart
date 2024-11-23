@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:frontend/constants/app_spacing.dart';
+import 'package:frontend/data/models/activity_model.dart';
+import 'package:frontend/providers/activity_model_provider.dart';
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_popular_activities_widget.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_when_widget.dart';
@@ -8,6 +10,7 @@ import 'package:frontend/screens/create_activity/widgets/choose_who_widget.dart'
 import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
 class CreateActivityScreen extends StatefulWidget {
   const CreateActivityScreen({super.key});
@@ -95,7 +98,6 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
-    print(_whatController.text);
     return Scaffold(
       body: PageView(
         controller: _pageController,
@@ -160,12 +162,36 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                 if (currentIndex == 3) {
                   if (_formKey.currentState!.validate()) {
                     //TODO calculate recommendations and go to next screen
+                    ActivityModel activityModel = ActivityModel(
+                        id: "???",
+                        description: _whatController.text,
+                        minParticipants: int.parse(_whoMinController.text),
+                        maxParticipants: int.parse(_whoMaxController.text),
+                        timeRange: {
+                          "startTime": _selectedStartTime,
+                          "endTime": _selectedEndTime
+                        },
+                        location: {
+                          "lat": _selectedLocation!.latitude,
+                          "lon": _selectedLocation!.longitude,
+                          "radius": _selectedRadius
+                        },
+                        participants: [
+                          //TODO have a User provider
+                        ]);
+
+                    // update the activity model in the provider
+                    context
+                        .read<ActivityModelProvider>()
+                        .updateActivityModel(activityModel);
+
+                    context.go(AppRouting.selectActivity);
                   }
                 }
 
                 _pageController.animateToPage(
                   currentIndex + 1,
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
               },

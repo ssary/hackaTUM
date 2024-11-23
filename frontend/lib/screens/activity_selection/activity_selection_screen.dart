@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:frontend/common_widgets/join_activity_tile.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
+import 'package:frontend/data/models/activity_model.dart';
+import 'package:frontend/providers/activity_model_provider.dart';
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/screens/activity_selection/widgets/pending_request.dart';
 import 'package:frontend/theme/colors.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ActivitySelectionScreen extends StatefulWidget {
   const ActivitySelectionScreen({super.key});
@@ -17,6 +21,9 @@ class ActivitySelectionScreen extends StatefulWidget {
 
 class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
   late Future<List<dynamic>> _loadActivties;
+
+  // get current activity
+  ActivityModel? currentRequest;
 
   @override
   void initState() {
@@ -32,6 +39,39 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
+
+    // Load the current activity request
+    currentRequest =
+        context.watch<ActivityModelProvider>().currentActivityRequest;
+
+    if (currentRequest == null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              gapH16,
+              Text(
+                "You have no pending activity requests",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+              ),
+              gapH16,
+              SolidButton(
+                text: "Create Activity",
+                onPressed: () {
+                  context.goNamed(AppRouting.createActivity);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       body: Center(
@@ -59,8 +99,8 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 10, 0, 20),
             child: PendingActivityRequest(
-              title: "Frisbee in the Park",
-              location: "Luitpoldpark",
+              title: currentRequest!.description,
+              location: "Garching",
               startTime: "15:00",
               endTime: "17:00",
               minParticipants: 5,
@@ -158,9 +198,24 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
     );
   }
 
+  Future<String> getLocationName(double latitude, double longitude) async {
+    try {
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(latitude, longitude);
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks.first;
+        return "${place.locality}, ${place.country}";
+      }
+    } catch (e) {
+      print(e);
+    }
+    return "Unknown location";
+  }
+
   //TODO: Implement _buildActivityList
   Future<List<dynamic>> loadActivities() async {
     // Load activities from the backend
+
     return [1, 2, 3];
   }
 }
