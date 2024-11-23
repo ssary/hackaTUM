@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_kit/flutter_form_kit.dart';
+import 'package:frontend/common_widgets/solid_button.dart';
+import 'package:frontend/routing/app_routing.dart';
+import 'package:frontend/theme/colors.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateActivityScreen extends StatefulWidget {
   const CreateActivityScreen({super.key});
@@ -9,66 +12,107 @@ class CreateActivityScreen extends StatefulWidget {
 }
 
 class _CreateActivityScreenState extends State<CreateActivityScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  // Controllers for the text fields
+  final TextEditingController _whatController = TextEditingController();
+  final TextEditingController _whichController = TextEditingController();
+  final TextEditingController _whenController = TextEditingController();
+  final TextEditingController _whoController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Dispose of controllers when no longer needed
+    _whatController.dispose();
+    _whichController.dispose();
+    _whenController.dispose();
+    _whoController.dispose();
+    super.dispose();
+  }
+
+  void _goNext() {
+    if (_formKey.currentState?.validate() ?? false) {
+      // Handle valid form submission
+      print('What: ${_whatController.text}');
+      print('Which: ${_whichController.text}');
+      print('When: ${_whenController.text}');
+      print('Who: ${_whoController.text}');
+
+      // Navigate or perform next action
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('All inputs are valid! Moving to the next page.')),
+      );
+      context.goNamed(AppRouting.selectActivity);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FlutterForm(
-        form: FlutterFormData(
-      name: "Survey Form",
-      themeColor: Colors.redAccent,
-      showLogo: false,
-      pages: [
-        FlutterFormPage(
-          heading: "Basic Information",
-          imageLayout: ImageLayout.leftExpanded,
-          image:
-              "https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-          description: "Please provide some basic details.",
-          answerType: AnswerType.shortText,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('TypeForm Page'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              _buildTextField(
+                controller: _whatController,
+                label: 'What?',
+                hintText: 'Enter what',
+              ),
+              SizedBox(height: 16),
+              _buildTextField(
+                controller: _whichController,
+                label: 'Which?',
+                hintText: 'Enter which',
+              ),
+              SizedBox(height: 16),
+              _buildTextField(
+                controller: _whenController,
+                label: 'When?',
+                hintText: 'Enter when',
+              ),
+              SizedBox(height: 16),
+              _buildTextField(
+                controller: _whoController,
+                label: 'Who?',
+                hintText: 'Enter who',
+              ),
+              SizedBox(height: 32),
+              SolidButton(
+                onPressed: _goNext,
+                backgroundColor: AppColors.primaryColor,
+                text: "Find persons to meet with",
+              ),
+            ],
+          ),
         ),
-        FlutterFormPage(
-            heading: "Favorite Color",
-            description: "What's your favorite color?",
-            imageLayout: ImageLayout.rightExpanded,
-            image:
-                "https://images.unsplash.com/photo-1533109721025-d1ae7ee7c1e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-            answerType: AnswerType.multipleChoice,
-            options: ["Red", "Blue", "Green"]),
-        FlutterFormPage(
-          heading: "Contact Information",
-          description: "Let us know how to reach you.",
-          answerType: AnswerType.contactInfo,
-        ),
-        FlutterFormPage(
-          heading: "Address",
-          description: "Please provide your address.",
-          answerType: AnswerType.address,
-        ),
-        FlutterFormPage(
-          heading: "Phone Number",
-          description: "What's your phone number?",
-          answerType: AnswerType.phoneNumber,
-        ),
-        FlutterFormPage(
-          heading: "Feedback",
-          description: "Share your thoughts with us.",
-          answerType: AnswerType.longText,
-        ),
-        FlutterFormPage(
-          heading: "Satisfaction",
-          description: "Are you satisfied with our service?",
-          answerType: AnswerType.yesNo,
-        ),
-      ],
-      onFormSubmitted: (pages) {
-        for (var element in pages) {
-          debugPrint(element.toJson().toString());
-          debugPrint("text: ${element.controller.text}");
-          debugPrint("selected options: ${element.selectedOptions}");
-          debugPrint("form: ${element.formField}");
-          debugPrint("---");
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    String? hintText,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hintText,
+        border: OutlineInputBorder(),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a value for $label';
         }
+        return null;
       },
-      onPageEdited: (page) {},
-    ));
+    );
   }
 }
