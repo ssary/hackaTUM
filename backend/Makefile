@@ -1,3 +1,5 @@
+include .env
+
 start:
 	uvicorn src.main:app --reload
 
@@ -26,3 +28,17 @@ install_requirements:
 remove_venv:
 	@echo "Removing virtual environment..."
 	rm -rf venv
+
+# Ersetzt DOCKER_REGISTRY mit der gewünschten Registry (z. B. docker.io oder AWS ECR URL)
+DOCKER_IMAGE=${DOCKER_USERNAME}/fastapi-app
+DOCKER_TAG=latest
+
+docker_build_and_push:
+	@echo "Building Docker Image..."
+	docker build --platform linux/amd64 -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+	@echo "Docker Image Built: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+	@echo "Logging into Docker Registry..."
+	echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
+	@echo "Pushing Docker Image to Registry..."
+	docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+	@echo "Docker Image Pushed Successfully!"

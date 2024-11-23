@@ -5,6 +5,7 @@ from enum import Enum
 class UserGender(str, Enum):
     MALE = "male"
     FEMALE = "female"
+    NONE_BINARY = "none-binary"
 
 class UserModel(BaseModel):
     name: str
