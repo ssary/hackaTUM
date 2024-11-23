@@ -7,13 +7,11 @@ class AppTheme {
       brightness: Brightness.light,
       visualDensity: VisualDensity.compact,
       colorScheme: const ColorScheme(
-        background: Color(0xFFF9FAEF),
         brightness: Brightness.light,
         error: Color(0xFFBA1A1A),
         errorContainer: Color(0xFFFFDAD6),
         inversePrimary: Color(0xFFADD28E),
         inverseSurface: Color(0xFF2E312A),
-        onBackground: Color(0xFF191D16),
         onError: Color(0xFFFFFFFF),
         onErrorContainer: Color(0xFF410002),
         onInverseSurface: Color(0xFFF0F2E7),
