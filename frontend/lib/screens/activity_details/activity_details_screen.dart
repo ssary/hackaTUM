@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/routing/app_routing.dart';
-import 'package:frontend/screens/activity_selection/activity_selection_screen.dart';
 import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 

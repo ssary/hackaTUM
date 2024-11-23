@@ -1,25 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/data/models/activity_model.dart';
+import 'package:frontend/data/models/user_model.dart';
 import 'package:frontend/providers/activity_model_provider.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_popular_activities_widget.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_when_widget.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_who_widget.dart';
 import 'package:frontend/theme/colors.dart';
+import 'package:http/http.dart' as httpreq;
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
-class CreateActivityScreen extends StatefulWidget {
+class CreateActivityScreen extends ConsumerStatefulWidget {
   const CreateActivityScreen({super.key});
 
   @override
-  State<CreateActivityScreen> createState() => _CreateActivityScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _CreateActivityScreenState();
 }
 
-class _CreateActivityScreenState extends State<CreateActivityScreen> {
+class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final double _sidePadding = 16.0;
@@ -145,47 +152,46 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
             gapW16,
             Expanded(
                 child: ElevatedButton(
-              onPressed: () {
-                if (currentIndex == 0) {
-                  // only continue if the user has selected an activity
-                  if (_whatController.text.isEmpty) {
-                    //show snack bar
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Please select an activity"),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-                }
+              onPressed: () async {
                 if (currentIndex == 3) {
                   if (_formKey.currentState!.validate()) {
-                    //TODO calculate recommendations and go to next screen
-                    ActivityModel activityModel = ActivityModel(
-                        id: "???",
-                        description: _whatController.text,
-                        minParticipants: int.parse(_whoMinController.text),
-                        maxParticipants: int.parse(_whoMaxController.text),
-                        timeRange: {
-                          "startTime": _selectedStartTime,
-                          "endTime": _selectedEndTime
-                        },
-                        location: {
-                          "lat": _selectedLocation!.latitude,
-                          "lon": _selectedLocation!.longitude,
-                          "radius": _selectedRadius
-                        },
-                        participants: [
-                          //TODO have a User provider
-                        ]);
+                    // Get location name from lat/lon
+                    String name = await getLocationName(
+                            _selectedLocation!.latitude,
+                            _selectedLocation!.longitude) ??
+                        "Unknown Location";
 
-                    // update the activity model in the provider
-                    context
-                        .read<ActivityModelProvider>()
-                        .updateActivityModel(activityModel);
+                    // Create the activity using the provider
+                    final activity = ActivityModel(
+                      id: "new_activity", // Generate or replace with actual ID
+                      description: _whatController.text,
+                      minParticipants: int.parse(_whoMinController.text),
+                      maxParticipants: int.parse(_whoMaxController.text),
+                      timeRange: {
+                        "startTime": _selectedStartTime,
+                        "endTime": _selectedEndTime,
+                      },
+                      location: {
+                        "lat": _selectedLocation!.latitude,
+                        "lon": _selectedLocation!.longitude,
+                        "name": name,
+                        "radius": _selectedRadius,
+                      },
+                      participants: [],
+                    );
 
-                    context.go(AppRouting.selectActivity);
+                    // Add the activity to the user's list of activities
+                    final user = ref.read(userProvider);
+
+                    // Set the activity in the provider
+                    ref
+                        .read(currentActivityProvider.notifier)
+                        .setActivity(activity, user!.uid);
+
+                    // Navigate to the next screen
+                    if (mounted) {
+                      context.go(AppRouting.selectActivity);
+                    }
                   }
                 }
 
@@ -551,6 +557,21 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
         },
       )
     ]);
+  }
+
+  Future<String?> getLocationName(double latitude, double longitude) async {
+    final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1');
+    final response = await httpreq.get(url, headers: {
+      'User-Agent': 'Flutter App',
+    });
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['display_name']; // Full location name
+    } else {
+      return null; // Handle error appropriately
+    }
   }
 }
 

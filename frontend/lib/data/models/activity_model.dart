@@ -1,34 +1,31 @@
-import 'package:flutter/material.dart';
-import 'package:frontend/data/models/user_model.dart';
-
 class ActivityModel {
   final String id;
   final String description;
+  final Map<String, dynamic> location;
+  final Map<String, dynamic> timeRange;
   final int minParticipants;
   final int maxParticipants;
-  final Map<String, TimeOfDay> timeRange;
-  final Map<String, double> location;
-  final List<UserModel> participants;
+  final List<String> participants;
 
   ActivityModel({
     required this.id,
     required this.description,
+    required this.location,
+    required this.timeRange,
     required this.minParticipants,
     required this.maxParticipants,
-    required this.timeRange,
-    required this.location,
     required this.participants,
   });
 
   factory ActivityModel.fromJson(Map<String, dynamic> json) {
     return ActivityModel(
-      id: json['id'],
-      description: json['description'],
-      minParticipants: json['minParticipants'],
-      maxParticipants: json['maxParticipants'],
-      timeRange: json['timeRange'],
-      location: json['location'],
-      participants: json['participants'],
+      id: json['id'] as String,
+      description: json['description'] as String,
+      location: json['location'] as Map<String, dynamic>,
+      timeRange: json['timeRange'] as Map<String, dynamic>,
+      minParticipants: json['minParticipants'] as int,
+      maxParticipants: json['maxParticipants'] as int,
+      participants: List<String>.from(json['participants'] as List<dynamic>),
     );
   }
 
@@ -36,10 +33,10 @@ class ActivityModel {
     return {
       'id': id,
       'description': description,
+      'location': location,
+      'timeRange': timeRange,
       'minParticipants': minParticipants,
       'maxParticipants': maxParticipants,
-      'timeRange': timeRange,
-      'location': location,
       'participants': participants,
     };
   }

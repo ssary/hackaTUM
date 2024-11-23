@@ -6,8 +6,6 @@ class UserModel {
   final String avatarUrl;
   final int age;
   final String gender;
-  final TimeOfDay createdAt;
-  final TimeOfDay updatedAt;
 
   UserModel({
     required this.uid,
@@ -15,8 +13,6 @@ class UserModel {
     required this.avatarUrl,
     required this.age,
     required this.gender,
-    required this.createdAt,
-    required this.updatedAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -26,8 +22,6 @@ class UserModel {
       avatarUrl: json['avatarUrl'],
       age: json['age'],
       gender: json["gebnder"],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
     );
   }
 
@@ -38,8 +32,6 @@ class UserModel {
       'avatarUrl': avatarUrl,
       'age': age,
       'gender': gender,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
     };
   }
 }

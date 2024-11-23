@@ -41,7 +41,10 @@ class PendingActivityRequest extends StatelessWidget {
             ),
             const SizedBox(width: 4.0),
             Text(
-              location,
+              location.length > 30
+                  ? '${location.substring(0, 30)}...'
+                  : location,
+              overflow: TextOverflow.ellipsis,
               style: subtitleStyle,
             ),
           ],

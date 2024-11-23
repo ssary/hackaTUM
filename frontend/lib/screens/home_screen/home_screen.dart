@@ -1,21 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common_widgets/join_activity_tile.dart';
-import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final PageController _pageController = PageController();
   late Timer _timer;
   int _currentIndex = 0;
@@ -102,6 +103,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Trigger initialization after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(userProvider.notifier).initializeUser();
+    });
+
+    final user = ref.watch(userProvider);
+
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Stack(

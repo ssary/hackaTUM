@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common_widgets/join_activity_tile.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/data/models/activity_model.dart';
 import 'package:frontend/providers/activity_model_provider.dart';
+
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/screens/activity_selection/widgets/pending_request.dart';
 import 'package:frontend/theme/colors.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-class ActivitySelectionScreen extends StatefulWidget {
+class ActivitySelectionScreen extends ConsumerStatefulWidget {
   const ActivitySelectionScreen({super.key});
 
   @override
-  State<ActivitySelectionScreen> createState() =>
+  ConsumerState<ActivitySelectionScreen> createState() =>
       _ActivitySelectionScreenState();
 }
 
-class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
+class _ActivitySelectionScreenState
+    extends ConsumerState<ActivitySelectionScreen> {
   late Future<List<dynamic>> _loadActivties;
 
   // get current activity
@@ -40,9 +41,8 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
 
-    // Load the current activity request
-    currentRequest =
-        context.watch<ActivityModelProvider>().currentActivityRequest;
+    // Get the current activity
+    currentRequest = ref.watch(currentActivityProvider);
 
     if (currentRequest == null) {
       return Scaffold(
@@ -63,6 +63,7 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
               gapH16,
               SolidButton(
                 text: "Create Activity",
+                backgroundColor: AppColors.primaryColor,
                 onPressed: () {
                   context.goNamed(AppRouting.createActivity);
                 },
@@ -100,11 +101,12 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
             padding: const EdgeInsets.fromLTRB(30, 10, 0, 20),
             child: PendingActivityRequest(
               title: currentRequest!.description,
-              location: "Garching",
-              startTime: "15:00",
-              endTime: "17:00",
-              minParticipants: 5,
-              maxParticipants: 10,
+              location: currentRequest!.location["name"],
+              startTime:
+                  currentRequest!.timeRange["startTime"]!.format(context),
+              endTime: currentRequest!.timeRange["endTime"]!.format(context),
+              minParticipants: currentRequest!.minParticipants,
+              maxParticipants: currentRequest!.maxParticipants,
               onOpen: () {
                 // Navigate to activity details for the selected activity
                 context.goNamed(AppRouting.activityDetails);
@@ -139,24 +141,28 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
                   } else if (snapshot.hasError) {
                     return const Text('Error loading activities');
                   } else {
-                    List activties = snapshot.data as List;
+                    List<ActivityModel> activties =
+                        snapshot.data as List<ActivityModel>;
                     return ListView.builder(
                       shrinkWrap: true,
                       padding: const EdgeInsets.all(4),
                       itemCount: 3,
                       itemBuilder: (context, index) {
                         //dynamic activity = activties[index];
+                        ActivityModel activity = activties[index];
                         return JoinActivityTile(
-                          title: "Frisbee in the Park",
-                          location: "Luitpoldpark",
-                          startTime: "15:00",
-                          endTime: "17:00",
+                          title: activity.description,
+                          location: activity.location["name"],
+                          startTime:
+                              activity.timeRange["startTime"]!.format(context),
+                          endTime:
+                              activity.timeRange["endTime"]!.format(context),
                           userProfilePicturePaths: const [
                             "user.png",
                             "user.png",
                             "user.png",
                           ],
-                          minParticipants: 5,
+                          minParticipants: activity.minParticipants,
                           onJoin: () {
                             // Navigate to activity details for the selected activity
                             context.goNamed(AppRouting.activityDetails);
@@ -198,24 +204,60 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
     );
   }
 
-  Future<String> getLocationName(double latitude, double longitude) async {
-    try {
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(latitude, longitude);
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks.first;
-        return "${place.locality}, ${place.country}";
-      }
-    } catch (e) {
-      print(e);
-    }
-    return "Unknown location";
-  }
-
   //TODO: Implement _buildActivityList
   Future<List<dynamic>> loadActivities() async {
     // Load activities from the backend
 
-    return [1, 2, 3];
+    // create dummy ActivityModel
+    List<ActivityModel> activities = [
+      ActivityModel(
+        id: "1",
+        description: "Play Football",
+        location: {"name": "Munich"},
+        timeRange: {
+          "startTime": TimeOfDay(hour: 15, minute: 0),
+          "endTime": TimeOfDay(hour: 17, minute: 0)
+        },
+        participants: [
+          "user1",
+          "user2",
+          "user3",
+        ],
+        minParticipants: 3,
+        maxParticipants: 5,
+      ),
+      ActivityModel(
+        id: "2",
+        description: "Play Basketball",
+        location: {"name": "Munich"},
+        timeRange: {
+          "startTime": TimeOfDay(hour: 15, minute: 0),
+          "endTime": TimeOfDay(hour: 17, minute: 0)
+        },
+        participants: [
+          "user1",
+        ],
+        minParticipants: 3,
+        maxParticipants: 5,
+      ),
+      ActivityModel(
+        id: "3",
+        description: "Play Tennis",
+        location: {"name": "Munich"},
+        timeRange: {
+          "startTime": TimeOfDay(hour: 15, minute: 0),
+          "endTime": TimeOfDay(hour: 17, minute: 0)
+        },
+        participants: [
+          "user1",
+          "user2",
+          "user3",
+        ],
+        minParticipants: 3,
+        maxParticipants: 5,
+      ),
+    ];
+
+    return activities;
   }
 }
