@@ -151,7 +151,7 @@ class AppTheme {
         headlineLarge: TextStyle(
           color: AppColors.onSurfaceColor,
           fontFamily: 'Sora',
-          fontSize: 40,
+          fontSize: 32,
           fontWeight: FontWeight.w400,
           letterSpacing: 0.25,
         ),
@@ -258,7 +258,7 @@ class AppTheme {
         headlineLarge: TextStyle(
           color: AppColors.onSurfaceColor,
           fontFamily: 'Sora',
-          fontSize: 40,
+          fontSize: 32,
           fontWeight: FontWeight.w400,
           letterSpacing: 0.25,
         ),
