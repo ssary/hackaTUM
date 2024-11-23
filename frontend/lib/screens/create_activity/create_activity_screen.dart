@@ -154,7 +154,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
 
                     // Create the activity using the provider
                     final activity = ActivityModel(
-                      id: "new_activity", // Generate or replace with actual ID
                       description: _whatController.text,
                       minParticipants: int.parse(_whoMinController.text),
                       maxParticipants: int.parse(_whoMaxController.text),
@@ -185,6 +184,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                     }
                   }
                 }
+
                 _pageController.animateToPage(
                   currentIndex + 1,
                   duration: const Duration(milliseconds: 300),

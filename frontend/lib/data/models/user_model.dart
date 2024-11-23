@@ -21,7 +21,7 @@ class UserModel {
       name: json['name'],
       avatarUrl: json['avatarUrl'],
       age: json['age'],
-      gender: json["gebnder"],
+      gender: json["gender"],
     );
   }
 

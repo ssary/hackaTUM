@@ -32,6 +32,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Trigger initialization after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(userProvider.notifier).initializeUser();
+    });
 
     if (_pageController.hasClients && _pageController.page != null) {
       // Set up a timer for auto-slide
@@ -103,12 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Trigger initialization after the widget is built
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   await ref.read(userProvider.notifier).initializeUser();
-    // });
-
-    //final user = ref.watch(userProvider);
+    final user = ref.watch(userProvider);
 
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(

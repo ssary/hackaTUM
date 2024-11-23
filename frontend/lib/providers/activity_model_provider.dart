@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/constants/api_endpoint.dart';
 import 'package:frontend/data/models/activity_model.dart';
 import 'package:http/http.dart' as httpreq;
 
@@ -23,36 +24,35 @@ class CurrentActivityNotifier extends StateNotifier<ActivityModel?> {
     }
   }
 
+  // get top k activities
+  Future<List<dynamic>> loadActivities(ActivityModel activity) async {
+    try {
+      final response = await httpreq.get(
+          Uri.parse('$baseUrl/activity/?activity_id=${activity.id}/similar'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data;
+      } else {
+        print('Error loading activities: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error loading activities: $e');
+      return [];
+    }
+  }
+
   Future<void> postActivity(String createdBy, ActivityModel activity) async {
-    // Define the endpoint URL
-    final String endpoint =
-        'https://your-api-url.com/activities'; // Replace with your actual endpoint URL
-
-    // Build the request body
-    final Map<String, dynamic> requestBody = {
-      "description": activity.description,
-      "minUsers": activity.minParticipants,
-      "maxUsers": activity.maxParticipants,
-      "timerange": {
-        "startTime": activity.timeRange['startTime'],
-        "endTime": activity.timeRange['endTime'],
-      },
-      "location": {
-        "lon": activity.location['lon'],
-        "lat": activity.location['lat'],
-        "radius": activity.location['radius'],
-      },
-      "joinedUsers": activity.participants,
-    };
-
+    // Replace with your actual endpoint URL
     try {
       // Make the POST request
       final response = await httpreq.post(
-        Uri.parse('$endpoint?created_by=$createdBy'),
+        Uri.parse('$baseUrl/activity/?created_by=$createdBy'),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: json.encode(requestBody),
+        body: json.encode(activity.toJson()),
       );
 
       // Handle the response

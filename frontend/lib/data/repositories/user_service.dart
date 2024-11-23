@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
   Future<UserModel?> loadUser(String uid) async {
-    print('Loading user with id: $uid');
     final url = Uri.parse('$baseUrl/user/$uid');
     try {
       final response = await http.get(url);
