@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/routing/app_routing.dart';
