@@ -9,7 +9,7 @@ import random
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
 async def get_available_activities():
-    current_time = datetime.now().timestamp()
+    current_time = datetime.now()
     available_activities = []
 
     async for activity in activity_collection.find():
@@ -34,6 +34,9 @@ async def get_top_K_similar_activities(activity_id: str, K: int):
 
     matched_activities = []
     current_activity = await activity_collection.find_one({"_id": ObjectId(activity_id)})
+    if not current_activity:
+        raise ValueError(f"Activity with ID {activity_id} not found.")
+    
     current_activity["id"] = str(current_activity["_id"])
     del current_activity["_id"]
 
@@ -41,19 +44,18 @@ async def get_top_K_similar_activities(activity_id: str, K: int):
     # calculate similarity with the current activity
     # Get the top K first similar activities using gpt-4o-mini
     for activity in available_activities:
+        activity_id = activity['id']
+        current_activity_id = current_activity['id']
+        if activity_id == current_activity_id:
+            continue
+
         user_1_input = current_activity["description"]
         user_2_input = activity["description"]
         api_response = create_chat_completion(client, user_1_input, user_2_input)
         is_matching = api_response["match_output"]
         if is_matching:
-            activity["id"] = str(activity["_id"])
-            del activity["_id"]
             matched_activities.append(activity)
             if len(matched_activities) == K:
                 break
         
     return matched_activities
-
-
-
-        
