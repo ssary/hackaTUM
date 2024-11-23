@@ -31,17 +31,19 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    // Set up a timer for auto-slide
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_pageController.hasClients) {
-        final nextPage = _pageController.page!.toInt() + 1;
-        _pageController.animateToPage(
-          nextPage % recommendedActivities.length,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
+    if (_pageController.hasClients && _pageController.page != null) {
+      // Set up a timer for auto-slide
+      _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+        if (_pageController.hasClients) {
+          final nextPage = _pageController.page!.toInt() + 1;
+          _pageController.animateToPage(
+            nextPage % recommendedActivities.length,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -84,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               gapH104,
               IconButton(
                 onPressed: () {
-                  context.goNamed(AppRouting.createActivity);
+                  context.replace(AppRouting.createActivity);
                 },
                 icon: Image.asset(
                   "people.gif",

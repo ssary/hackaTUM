@@ -101,7 +101,7 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                   crossAxisCount: 2, // Two items per row
                   crossAxisSpacing: 16.0, // Spacing between items horizontally
                   mainAxisSpacing: 16.0, // Spacing between items vertically
-                  mainAxisExtent: 180.0, // Fixed height of each item
+                  mainAxisExtent: 100.0, // Fixed height of each item
                 ),
                 itemCount: popularEventsList.length,
                 itemBuilder: (context, index) {
