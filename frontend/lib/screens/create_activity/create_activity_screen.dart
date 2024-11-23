@@ -212,7 +212,9 @@ class _CreateActivityScreenState extends State<CreateActivityScreen> {
                   gapW16,
                   Expanded(
                       child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.goNamed(AppRouting.selectActivity);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF5C925E), // Green button
                       shape: RoundedRectangleBorder(
