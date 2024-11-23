@@ -78,37 +78,50 @@ class JoinActivityTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 8.0),
                   SizedBox(
-                    width:
-                        (userProfilePicturePaths.length + 1) * _avatarImageSize,
                     height: _avatarSize,
-                    child: Stack(
-                      alignment: Alignment.centerLeft,
-                      children: List.generate(userProfilePicturePaths.length,
-                          (index) {
-                        return Positioned(
-                          width: _avatarSize,
-                          left: (userProfilePicturePaths.length - index - 1) *
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: (userProfilePicturePaths.length + 0.5) *
                               _avatarImageSize,
-                          child: CircleAvatar(
-                            radius: _avatarSize / 2,
-                            backgroundColor: AppColors.surfaceColor,
-                            child: CircleAvatar(
-                              radius: _avatarImageSize / 2,
-                              backgroundImage: AssetImage(
-                                  userProfilePicturePaths[
-                                      userProfilePicturePaths.length -
-                                          index -
-                                          1]),
-                            ),
+                          child: Stack(
+                            alignment: Alignment.centerLeft,
+                            children: List.generate(
+                                userProfilePicturePaths.length, (index) {
+                              return Positioned(
+                                width: _avatarSize,
+                                left: (userProfilePicturePaths.length -
+                                        index -
+                                        1) *
+                                    _avatarImageSize,
+                                child: CircleAvatar(
+                                  radius: _avatarSize / 2,
+                                  backgroundColor: AppColors.surfaceColor,
+                                  child: CircleAvatar(
+                                    radius: _avatarImageSize / 2,
+                                    backgroundImage: AssetImage(
+                                        userProfilePicturePaths[
+                                            userProfilePicturePaths.length -
+                                                index -
+                                                1]),
+                                  ),
+                                ),
+                              );
+                            }),
                           ),
-                        );
-                      }),
+                        ),
+                        Text(
+                          '${userProfilePicturePaths.length}/$minParticipants',
+                          style: subtitleStyle,
+                        ),
+                      ],
                     ),
                   )
                 ],
               ),
             ),
             GestureDetector(
+              onTap: onJoin,
               child: Container(
                 height: 27,
                 width: 90,
@@ -116,7 +129,7 @@ class JoinActivityTile extends StatelessWidget {
                   color: AppColors.primaryColor.withOpacity(0.25),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Join',
                     style: TextStyle(
