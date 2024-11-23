@@ -7,7 +7,11 @@ router = APIRouter(prefix="/user", tags=["User"])
 
 @router.post("/")
 async def create_user(user: UserModel):
+    if not user.userId:
+        raise ValueError("User ID is required for user creation.")
+
     user_data = user.model_dump()
+    user_data["_id"] = user.userId # userId === deviceId from flutter!!!!
     result = await user_collection.insert_one(user_data)
     return {"id": str(result.inserted_id)}
 

@@ -8,6 +8,7 @@ class UserGender(str, Enum):
     NONE_BINARY = "none-binary"
 
 class UserModel(BaseModel):
+    userId: str
     name: str
     avatarUrl: str
     age: int
