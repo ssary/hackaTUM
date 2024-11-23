@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/colors.dart';
 
 class JoinActivityTile extends StatelessWidget {
   final String title;
@@ -6,6 +7,7 @@ class JoinActivityTile extends StatelessWidget {
   final String startTime;
   final String endTime;
   final List<String> userProfilePicturePaths;
+  final int minParticipants;
   final VoidCallback onJoin;
 
   const JoinActivityTile({
@@ -15,15 +17,28 @@ class JoinActivityTile extends StatelessWidget {
     required this.startTime,
     required this.endTime,
     required this.userProfilePicturePaths,
+    required this.minParticipants,
     required this.onJoin,
   }) : super(key: key);
 
+  final double _avatarSize = 18.0;
+  final double _avatarImageSize = 16.0;
+
   @override
   Widget build(BuildContext context) {
+    TextStyle subtitleStyle = const TextStyle(
+      fontSize: 12,
+    );
     return Card(
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(
+            color: Color.fromARGB(255, 217, 217, 217), width: 1.0),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Expanded(
               child: Column(
@@ -44,7 +59,10 @@ class JoinActivityTile extends StatelessWidget {
                         size: 16.0,
                       ),
                       const SizedBox(width: 4.0),
-                      Text(location),
+                      Text(
+                        location,
+                        style: subtitleStyle,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8.0),
@@ -55,41 +73,59 @@ class JoinActivityTile extends StatelessWidget {
                         size: 16.0,
                       ),
                       const SizedBox(width: 4.0),
-                      Text('$startTime - $endTime'),
+                      Text('$startTime - $endTime', style: subtitleStyle),
                     ],
                   ),
                   const SizedBox(height: 8.0),
                   SizedBox(
-                    height: 40.0,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: userProfilePicturePaths.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 4.0),
+                    width:
+                        (userProfilePicturePaths.length + 1) * _avatarImageSize,
+                    height: _avatarSize,
+                    child: Stack(
+                      alignment: Alignment.centerLeft,
+                      children: List.generate(userProfilePicturePaths.length,
+                          (index) {
+                        return Positioned(
+                          width: _avatarSize,
+                          left: (userProfilePicturePaths.length - index - 1) *
+                              _avatarImageSize,
                           child: CircleAvatar(
-                            backgroundImage: AssetImage(
-                              userProfilePicturePaths[index],
+                            radius: _avatarSize / 2,
+                            backgroundColor: AppColors.surfaceColor,
+                            child: CircleAvatar(
+                              radius: _avatarImageSize / 2,
+                              backgroundImage: AssetImage(
+                                  userProfilePicturePaths[
+                                      userProfilePicturePaths.length -
+                                          index -
+                                          1]),
                             ),
-                            radius: 16.0,
                           ),
                         );
-                      },
+                      }),
                     ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text('${userProfilePicturePaths.length}/5'),
+                  )
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: onJoin,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[300],
-                foregroundColor: Colors.white,
+            GestureDetector(
+              child: Container(
+                height: 27,
+                width: 90,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Center(
+                  child: Text(
+                    'Join',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryColor),
+                  ),
+                ),
               ),
-              child: const Text('Join'),
-            ),
+            )
           ],
         ),
       ),

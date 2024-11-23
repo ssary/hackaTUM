@@ -61,15 +61,16 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
                     itemBuilder: (context, index) {
                       //dynamic activity = activties[index];
                       return JoinActivityTile(
-                        title: "Frisbee im Park",
+                        title: "Frisbee in the Park",
                         location: "Luitpoldpark",
                         startTime: "15:00",
                         endTime: "17:00",
                         userProfilePicturePaths: const [
-                          "assets/images/user1.jpg",
-                          "assets/images/user2.jpg",
-                          "assets/images/user3.jpg",
+                          "user.png",
+                          "user.png",
+                          "user.png",
                         ],
+                        minParticipants: 5,
                         onJoin: () {
                           // Navigate to activity details for the selected activity
                           context.goNamed(AppRouting.activityDetails);
