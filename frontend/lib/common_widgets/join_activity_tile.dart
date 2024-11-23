@@ -51,7 +51,7 @@ class JoinActivityTile extends StatelessWidget {
                       fontSize: 16.0,
                     ),
                   ),
-                  const SizedBox(height: 8.0),
+                  const SizedBox(height: 2.0),
                   Row(
                     children: [
                       const Icon(
@@ -65,7 +65,7 @@ class JoinActivityTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8.0),
+                  const SizedBox(height: 6.0),
                   Row(
                     children: [
                       const Icon(
@@ -76,7 +76,7 @@ class JoinActivityTile extends StatelessWidget {
                       Text('$startTime - $endTime', style: subtitleStyle),
                     ],
                   ),
-                  const SizedBox(height: 8.0),
+                  const SizedBox(height: 6.0),
                   SizedBox(
                     height: _avatarSize,
                     child: Row(
@@ -134,7 +134,8 @@ class JoinActivityTile extends StatelessWidget {
                     'Join',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryColor),
+                        color: AppColors.primaryColor,
+                        fontSize: 12),
                   ),
                 ),
               ),

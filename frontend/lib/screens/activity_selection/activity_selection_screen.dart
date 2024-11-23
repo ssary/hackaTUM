@@ -3,6 +3,7 @@ import 'package:frontend/common_widgets/join_activity_tile.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/routing/app_routing.dart';
+import 'package:frontend/screens/activity_selection/widgets/pending_request.dart';
 import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 
@@ -57,9 +58,17 @@ class _ActivitySelectionScreenState extends State<ActivitySelectionScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 10, 0, 20),
-            child: Container(
-              height: 128,
-              color: Colors.orange,
+            child: PendingActivityRequest(
+              title: "Frisbee in the Park",
+              location: "Luitpoldpark",
+              startTime: "15:00",
+              endTime: "17:00",
+              minParticipants: 5,
+              maxParticipants: 10,
+              onOpen: () {
+                // Navigate to activity details for the selected activity
+                context.goNamed(AppRouting.activityDetails);
+              },
             ),
           ),
           Container(
