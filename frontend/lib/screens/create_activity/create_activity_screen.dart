@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/common_widgets/free_text_input.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/data/models/activity_model.dart';
 import 'package:frontend/data/models/user_model.dart';
@@ -12,6 +13,7 @@ import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_popular_activities_widget.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_when_widget.dart';
 import 'package:frontend/screens/create_activity/widgets/choose_who_widget.dart';
+import 'package:frontend/screens/create_activity/widgets/event_tile.dart';
 import 'package:frontend/theme/colors.dart';
 import 'package:http/http.dart' as httpreq;
 import 'package:go_router/go_router.dart';
@@ -46,10 +48,12 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   LatLng? _selectedLocation; // Stores the chosen location
 
   final popularActivitiesList = [
-    "Play Table Tennis",
-    "Grab a coffee",
+    "Grab lunch",
+    "Football",
     "Bierpong match",
-    "Drink another RedBull"
+    "Chess",
+    "Jogging",
+    "Calisthenics",
   ];
 
   final popularEventsList = [
@@ -123,33 +127,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
             Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {
-                if (currentIndex == 0) {
-                  context.go(AppRouting.home);
-                } else {
-                  _pageController.animateToPage(
-                    currentIndex - 1,
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                }
-              },
-              icon: Container(
-                width: 58,
-                height: 58,
-                decoration: BoxDecoration(
-                  color: AppColors.secondaryColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_outlined,
-                  color: AppColors.secondaryColor,
-                  size: 32,
-                ),
-              ),
-            ),
-            gapW16,
             Expanded(
                 child: ElevatedButton(
               onPressed: () async {
@@ -204,7 +181,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.secondaryColor, // Green button
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
                 padding: EdgeInsets.symmetric(
                   horizontal: _sidePadding,
@@ -244,109 +221,115 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
 
   Widget chooseWhatWidget(screenWidth) {
     return Center(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Title
-        Padding(
-          padding: EdgeInsets.all(_sidePadding),
-          child: Text(
-            "Start Activity",
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      child: Column(children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 26, 16, 16),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () => {},
+                  icon: const Icon(
+                    Icons.arrow_back_outlined,
+                    color: Colors.black,
+                    size: 32,
+                  ),
                 ),
-          ),
-        ),
-        gapH8,
-        // make a horizontal line
-        Container(
-          height: 1,
-          width: screenWidth,
-          color: Colors.grey,
-        ),
-
-        // "Choose a popular activity" section
-        Padding(
-          padding: EdgeInsets.all(_sidePadding),
-          child: Text(
-            "Choose a popular activity",
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                const SizedBox(
+                  width: 8,
                 ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(_sidePadding, 0, _sidePadding, 0),
-          child: ChoosePopularActivitiesWidget(
-            activities: popularActivitiesList,
-            index: currentIndex,
-            pageController: _pageController,
-            whatController: _whatController,
-          ),
-        ),
-        gapH8,
-        Container(
-          height: 1,
-          width: screenWidth,
-          color: Colors.grey,
-        ),
-        gapH16,
-        // "Attend an event near you" section
-
-        Padding(
-          padding: EdgeInsets.all(_sidePadding),
-          child: recommendedEventsWidget(),
-        ),
-
-        gapH24,
-        Container(
-          height: 1,
-          width: screenWidth,
-          color: Colors.grey,
-        ),
-        const Spacer(),
-        // "Have something in mind?" section
-        Padding(
-          padding:
-              EdgeInsets.fromLTRB(_sidePadding, _sidePadding, _sidePadding, 0),
-          child: Text(
-            "Have something in mind?",
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                Text(
+                  "Start Activity",
+                  textAlign: TextAlign.left,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                 ),
-          ),
-        ),
-
-        Padding(
-          padding: EdgeInsets.all(_sidePadding),
-          child: TextField(
-            controller: _whatController,
-            decoration: InputDecoration(
-              hintText: "Describe your activity",
-              hintStyle: const TextStyle(color: Colors.grey),
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                borderSide: BorderSide(
-                  color: Colors.grey.shade300,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                borderSide: const BorderSide(
-                  color: AppColors.secondaryColor, // Green border when focused
-                ),
-              ),
+              ],
             ),
-            maxLines: 2,
           ),
         ),
-        gapH32,
-      ],
-    ));
+        Container(
+          color: const Color.fromARGB(255, 217, 217, 217),
+          height: 1,
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // "Choose a popular activity" section
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(22, 13, 0, 15),
+                  child: Text(
+                    "Popular activities",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 5, 22, 17),
+                  child: ChoosePopularActivitiesWidget(
+                    activities: popularActivitiesList,
+                    index: currentIndex,
+                    pageController: _pageController,
+                    whatController: _whatController,
+                  ),
+                ),
+                Container(
+                  height: 1,
+                  width: screenWidth,
+                  color: const Color.fromARGB(255, 217, 217, 217),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(22, 17, 0, 12),
+                  child: Text(
+                    "Events near you",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 0, 22, 28),
+                  child: recommendedEventsWidget(),
+                ),
+                Container(
+                  height: 1,
+                  width: screenWidth,
+                  color: const Color.fromARGB(255, 217, 217, 217),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(22, 20, 0, 14),
+                  child: Text(
+                    "Events near you",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
+                    child: FreeTextInputBox(
+                      textEditingController: _whatController,
+                      hintText: "Describe your activity",
+                    )),
+              ],
+            ),
+          ),
+        ),
+      ]),
+    );
   }
 
   Widget chooseWhereWidget() {
@@ -472,22 +455,14 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
 
   Widget recommendedEventsWidget() {
     return Column(children: [
-      Text(
-        "Attend an event near you",
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-      ),
-      gapH16,
       GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // Two items per row
-          crossAxisSpacing: 16.0, // Spacing between items horizontally
-          mainAxisSpacing: 16.0, // Spacing between items vertically
-          mainAxisExtent: 100.0, // Fixed height of each item
+          crossAxisSpacing: 12.0, // Spacing between items horizontally
+          mainAxisSpacing: 12.0, // Spacing between items vertically
+          mainAxisExtent: 99.0, // Fixed height of each item
         ),
         itemCount: popularEventsList.length,
         itemBuilder: (context, index) {
@@ -500,59 +475,9 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                   curve: Curves.easeInOut,
                 );
               },
-              child: Container(
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.0),
-                  border: Border.all(
-                    color: const Color(0xFF705F8B), // Purple border
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Flexible(
-                      flex: 2,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12.0),
-                          topRight: Radius.circular(12.0),
-                        ),
-                        child: Image.asset(
-                          "event_image.png", // Make sure the path is correct
-                          height: 80,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceColor,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(12),
-                            bottomRight: Radius.circular(12),
-                          ),
-                          border: Border.all(
-                            color: const Color(0xFF705F8B), // Purple border
-                          ),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          popularEventsList[index],
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.secondaryColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              child: EventTile(
+                imgPath: 'event_image.png',
+                title: popularEventsList[index],
               ));
         },
       )
