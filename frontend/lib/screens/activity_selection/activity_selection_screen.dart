@@ -8,7 +8,7 @@ import 'package:frontend/providers/activity_model_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
 
 import 'package:frontend/routing/app_routing.dart';
-import 'package:frontend/screens/activity_selection/widgets/pending_request.dart';
+import 'package:frontend/common_widgets/pending_request.dart';
 import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 

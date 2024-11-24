@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/common_widgets/chat_window.dart';
+import 'package:frontend/common_widgets/free_text_input.dart';
+import 'package:frontend/common_widgets/participant_list.dart';
+import 'package:frontend/common_widgets/pending_request.dart';
 import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/routing/app_routing.dart';
@@ -23,37 +27,111 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: AppColors.surfaceColor,
       body: Column(
         children: [
-          Container(
-            height: 300,
-            width: screenWidth,
-            color: Colors.lightBlue,
-            child: Text("Your activity"),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 24, 16, 18),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => {},
+                    icon: const Icon(
+                      Icons.arrow_back_outlined,
+                      color: Colors.black,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  const Text(
+                    "Your Activity",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 32),
+                  ),
+                ],
+              ),
+            ),
           ),
-          gapH32,
-          Text("Waiting Room"),
-          ListView.builder(
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text("Person ${peopleJoined[index]}"),
-                );
-              },
-              itemCount: 3),
-          gapH24,
-          SolidButton(
-              text: "Open Chat",
-              backgroundColor: Colors.blue,
-              onPressed: () {}),
-          gapH24,
-          SolidButton(
-              text: "Cancel Activity",
-              backgroundColor: AppColors.errorRed,
-              onPressed: () {
-                //TODO:
-                context.goNamed(AppRouting.home);
-              })
+          Container(
+            color: const Color.fromARGB(255, 217, 217, 217),
+            height: 1,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 16, 22, 16),
+            child: CollapsablePendingActivityRequest(
+                title: "Frisbee in the Park",
+                location: "Luitpoldpark",
+                startTime: "15:00",
+                endTime: "17:00",
+                minParticipants: 2,
+                maxParticipants: 4,
+                includeOpenButton: false,
+                onOpen: () => {}),
+          ),
+          Container(
+            color: const Color.fromARGB(255, 217, 217, 217),
+            height: 1,
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(30, 16, 22, 16),
+            child: CollapsableParticipantList(
+              participants: [
+                ActivityParticipant(
+                    name: "You", gender: "Male", pfpUrl: "user.png", age: 23),
+                ActivityParticipant(
+                    name: "Isabella",
+                    gender: "Female",
+                    pfpUrl: "user.png",
+                    age: 22)
+              ],
+              denominator: 4,
+            ),
+          ),
+          Container(
+            color: const Color.fromARGB(255, 217, 217, 217),
+            height: 1,
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(30, 22, 0, 15),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Chat",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(30, 22, 0, 15),
+            child: Column(
+              children: [
+                const ChatMessage(
+                  text: 'Hey, lol',
+                  name: 'Hans',
+                  messageTimestamp: '15:21',
+                  imageURL: 'user.png',
+                ),
+                Column(
+                  children: [
+                    FreeTextInputBox(
+                        textEditingController: TextEditingController(),
+                        hintText: "Chat with the group..."),
+                  ],
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
