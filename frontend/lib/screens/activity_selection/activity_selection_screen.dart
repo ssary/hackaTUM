@@ -181,9 +181,9 @@ class _ActivitySelectionScreenState
                           endTime:
                               activity.timeRange["endTime"]!.format(context),
                           userProfilePicturePaths: const [
-                            "user.png",
-                            "user.png",
-                            "user.png",
+                            "woman.png",
+                            "man.png",
+                            "girl.png",
                           ],
                           minParticipants: activity.minParticipants,
                           onJoin: () {
