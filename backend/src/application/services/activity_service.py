@@ -8,17 +8,17 @@ import openai
 
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
+
 async def get_available_activities():
     current_time = datetime.now()
     available_activities = []
 
-    for activity in activity_collection.find():
+    async for activity in activity_collection.find():
         end_time = activity["timerange"]["endTime"]
-
         if (
-            current_time < end_time and
-            len(activity["joinedUsers"]) > 0 and
-            len(activity["joinedUsers"]) < activity["maxUsers"]
+                current_time < end_time and
+                len(activity["joinedUsers"]) > 0 and
+                len(activity["joinedUsers"]) < activity["maxUsers"]
         ):
             activity["id"] = str(activity["_id"])
             del activity["_id"]
@@ -26,8 +26,9 @@ async def get_available_activities():
 
     return available_activities
 
+
 async def get_top_K_similar_activities(activity_id: str, K: int):
-    available_activities = get_available_activities()
+    available_activities = await get_available_activities()
 
     # randomize the available activities to not depend on the order
     random.shuffle(available_activities)
@@ -36,10 +37,9 @@ async def get_top_K_similar_activities(activity_id: str, K: int):
     current_activity = await activity_collection.find_one({"_id": ObjectId(activity_id)})
     if not current_activity:
         raise ValueError(f"Activity with ID {activity_id} not found.")
-    
+
     current_activity["id"] = str(current_activity["_id"])
     del current_activity["_id"]
-
 
     # calculate similarity with the current activity
     # Get the top K first similar activities using gpt-4o-mini
@@ -57,5 +57,5 @@ async def get_top_K_similar_activities(activity_id: str, K: int):
             matched_activities.append(activity)
             if len(matched_activities) == K:
                 break
-        
+
     return matched_activities
