@@ -7,6 +7,7 @@ class ActivityLocation(BaseModel):
     lon: float
     lat: float
     radius: float
+    name: str = "Default Location"
 
 class ActivityTimerange(BaseModel):
     startTime: datetime
