@@ -34,9 +34,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ref.read(userProvider.notifier).initializeUser();
-    });
-
-    if (_pageController.hasClients && _pageController.page != null) {
       _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
         if (_pageController.hasClients) {
           final nextPage = (_pageController.page?.toInt() ?? 0) + 1;
@@ -47,7 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           );
         }
       });
-    }
+    });
   }
 
   @override
@@ -165,14 +162,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               itemBuilder: (context, index) {
                 return JoinActivityTile(
                   title: recommendedActivities[index],
-                  location: "Munich",
-                  startTime: "15:00",
-                  endTime: "17:00",
-                  userProfilePicturePaths: const [
-                    "user.png",
-                    "user.png",
-                    "user.png",
-                  ],
+                  location: [
+                    "Olympiapark",
+                    "Hofbräuhaus",
+                    "Viktualienmarkt"
+                  ][index % 3],
+                  startTime: ["15:00", "13:00", "14:00"][index % 3],
+                  endTime: ["17:00", "14:30", "18:30"][index % 3],
+                  userProfilePicturePaths: [
+                    "man.png",
+                    "girl.png",
+                    "woman.png",
+                  ]..shuffle(),
                   minParticipants: 3 + (index % 3),
                   onJoin: () {
                     context.goNamed(AppRouting.activityDetails);
