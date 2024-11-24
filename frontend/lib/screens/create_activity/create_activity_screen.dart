@@ -169,19 +169,10 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                       },
                       participants: [],
                     );
+                    print(activity);
+                    // go to the activity selection screen and pass the activity as extra
 
-                    // Add the activity to the user's list of activities
-                    final user = ref.read(userProvider);
-
-                    // Set the activity in the provider
-                    ref
-                        .read(currentActivityProvider.notifier)
-                        .setActivity(activity, user!.uid);
-
-                    // Navigate to the next screen
-                    if (mounted) {
-                      context.go(AppRouting.selectActivity);
-                    }
+                    context.goNamed(AppRouting.selectActivity, extra: activity);
                   }
                 }
 

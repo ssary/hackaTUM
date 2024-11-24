@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ActivityModel {
-  final String? id;
+  String? id;
   final String description;
   final Map<String, dynamic> location;
   final Map<String, TimeOfDay> timeRange;
@@ -47,6 +47,31 @@ class ActivityModel {
       'maxUsers': maxParticipants,
       'joinedUsers': participants,
     };
+  }
+
+  ActivityModel copyWith({
+    String? id,
+    String? description,
+    Map<String, dynamic>? location,
+    Map<String, TimeOfDay>? timeRange,
+    int? minParticipants,
+    int? maxParticipants,
+    List<String>? participants,
+  }) {
+    return ActivityModel(
+      id: id ?? this.id,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      timeRange: timeRange ?? this.timeRange,
+      minParticipants: minParticipants ?? this.minParticipants,
+      maxParticipants: maxParticipants ?? this.maxParticipants,
+      participants: participants ?? this.participants,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'ActivityModel{id: $id, description: $description, location: $location, timeRange: $timeRange, minParticipants: $minParticipants, maxParticipants: $maxParticipants, participants: $participants}';
   }
 }
 

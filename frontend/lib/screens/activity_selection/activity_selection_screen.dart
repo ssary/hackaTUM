@@ -5,6 +5,7 @@ import 'package:frontend/common_widgets/solid_button.dart';
 import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/data/models/activity_model.dart';
 import 'package:frontend/providers/activity_model_provider.dart';
+import 'package:frontend/providers/user_provider.dart';
 
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/screens/activity_selection/widgets/pending_request.dart';
@@ -12,7 +13,8 @@ import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 
 class ActivitySelectionScreen extends ConsumerStatefulWidget {
-  const ActivitySelectionScreen({super.key});
+  ActivityModel? activityModel;
+  ActivitySelectionScreen({super.key, this.activityModel});
 
   @override
   ConsumerState<ActivitySelectionScreen> createState() =>
@@ -28,9 +30,11 @@ class _ActivitySelectionScreenState
 
   @override
   void initState() {
-    super.initState();
-
-    _loadActivties = loadActivities();
+    super.initState(); // Always call super first.
+    Future(() {
+      String uid = ref.read(userProvider)!.uid;
+      _loadActivties = loadActivities(uid);
+    });
   }
 
   late double screenHeight;
@@ -40,10 +44,6 @@ class _ActivitySelectionScreenState
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-
-    // Get the current activity
-    currentRequest = ref.watch(currentActivityProvider);
-
     if (currentRequest == null) {
       return Scaffold(
         body: Center(
@@ -143,6 +143,10 @@ class _ActivitySelectionScreenState
                   } else {
                     List<ActivityModel> activties =
                         snapshot.data as List<ActivityModel>;
+                    if (activties.isEmpty) {
+                      return const Text('No activities found');
+                    }
+
                     return ListView.builder(
                       shrinkWrap: true,
                       padding: const EdgeInsets.all(4),
@@ -204,60 +208,18 @@ class _ActivitySelectionScreenState
     );
   }
 
-  //TODO: Implement _buildActivityList
-  Future<List<dynamic>> loadActivities() async {
-    // Load activities from the backend
+  Future<List<ActivityModel>> loadActivities(String uid) async {
+    // upload the newlly created activity
+    String id = await ref
+        .read(currentActivityProvider.notifier)
+        .addActivity(widget.activityModel!, uid);
 
-    // create dummy ActivityModel
-    List<ActivityModel> activities = [
-      ActivityModel(
-        id: "1",
-        description: "Play Football",
-        location: {"name": "Munich"},
-        timeRange: {
-          "startTime": TimeOfDay(hour: 15, minute: 0),
-          "endTime": TimeOfDay(hour: 17, minute: 0)
-        },
-        participants: [
-          "user1",
-          "user2",
-          "user3",
-        ],
-        minParticipants: 3,
-        maxParticipants: 5,
-      ),
-      ActivityModel(
-        id: "2",
-        description: "Play Basketball",
-        location: {"name": "Munich"},
-        timeRange: {
-          "startTime": TimeOfDay(hour: 15, minute: 0),
-          "endTime": TimeOfDay(hour: 17, minute: 0)
-        },
-        participants: [
-          "user1",
-        ],
-        minParticipants: 3,
-        maxParticipants: 5,
-      ),
-      ActivityModel(
-        id: "3",
-        description: "Play Tennis",
-        location: {"name": "Munich"},
-        timeRange: {
-          "startTime": TimeOfDay(hour: 15, minute: 0),
-          "endTime": TimeOfDay(hour: 17, minute: 0)
-        },
-        participants: [
-          "user1",
-          "user2",
-          "user3",
-        ],
-        minParticipants: 3,
-        maxParticipants: 5,
-      ),
-    ];
+    print("Loading activities using current request ${id}");
+    List<dynamic> activities =
+        await ref.read(currentActivityProvider.notifier).loadActivities(
+              id,
+            );
 
-    return activities;
+    return activities.map((e) => ActivityModel.fromJson(e)).toList();
   }
 }

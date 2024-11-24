@@ -1,3 +1,4 @@
+import 'package:frontend/data/models/activity_model.dart';
 import 'package:frontend/screens/activity_details/activity_details_screen.dart';
 import 'package:frontend/screens/activity_selection/activity_selection_screen.dart';
 import 'package:frontend/screens/create_activity/create_activity_screen.dart';
@@ -33,7 +34,15 @@ class AppRouting {
             GoRoute(
               name: selectActivity,
               path: selectActivity,
-              builder: (context, state) => const ActivitySelectionScreen(),
+              builder: (context, state) {
+                try {
+                  final activityModel = state.extra as ActivityModel;
+                  return ActivitySelectionScreen(activityModel: activityModel);
+                } on Exception catch (e) {
+                  print(e);
+                  return const ActivityDetailsScreen();
+                }
+              },
             ),
             GoRoute(
               name: activityDetails,
