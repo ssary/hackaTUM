@@ -111,9 +111,10 @@ class _ChooseWhenWidgetState extends State<ChooseWhenWidget> {
                       "Select Time",
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 32),
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                        fontSize: 28
+                      ),
                     ),
                   ],
                 ),

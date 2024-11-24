@@ -32,24 +32,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Trigger initialization after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ref.read(userProvider.notifier).initializeUser();
     });
 
-    if (_pageController.hasClients && _pageController.page != null) {
-      // Set up a timer for auto-slide
-      _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-        if (_pageController.hasClients) {
-          final nextPage = _pageController.page!.toInt() + 1;
-          _pageController.animateToPage(
-            nextPage % recommendedActivities.length,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-          );
-        }
-      });
-    }
+    _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
+      if (_pageController.hasClients) {
+        final nextPage = (_pageController.page?.toInt() ?? 0) + 1;
+        _pageController.animateToPage(
+          nextPage % recommendedActivities.length,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   @override
@@ -59,143 +55,100 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.dispose();
   }
 
-  Widget startActivityButton(double screenWidth) {
-    double boxSize = screenWidth - 2 * 59;
-    return SizedBox(
-      width: boxSize,
-      height: boxSize,
-      child: GestureDetector(
-        onTap: () {
-          context.replace(AppRouting.createActivity);
-        },
-        child: Card(
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(
-                color: Color.fromARGB(255, 217, 217, 217), width: 1.0),
-            borderRadius: BorderRadius.circular(16.0),
+  Widget _buildStartActivityButton(double screenWidth) {
+    final double boxSize = screenWidth - 118; // Calculate button width
+
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 8),
+          child: Image.asset(
+            "people.gif",
+            width: 700,
+            height: 350,
           ),
-          elevation: 0,
-          child: Stack(alignment: Alignment.center, children: [
-            Positioned(
-                bottom: 0,
-                child: Image.asset(
-                  "people.gif",
-                  width: boxSize * 0.9,
-                  height: boxSize * 0.9,
-                )),
-            Positioned(
-              bottom: boxSize * 0.125,
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Start Activity',
-                    style: TextStyle(
-                        color: AppColors.primaryColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor),
-                ],
-              ),
-            )
-          ]),
         ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-
-    double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      body: Stack(
-        children: [
-          Column(
+        Positioned(
+          bottom: 12,
+          child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(22, 20, 22, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(
-                      "munich_logo.png",
+              SizedBox(
+                width: boxSize,
+                height: 100,
+                child: GestureDetector(
+                  onTap: () {
+                    context.replace(AppRouting.createActivity);
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                        color: Color.fromARGB(255, 217, 217, 217),
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(16.0),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        //TODO: Implement navigation
-                      },
-                      icon: Image.asset("list_icon.png"),
+                    elevation: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Start Activity',
+                          style: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              gapH8,
+              Container(
+                width: (screenWidth - 118) * 0.8,
+                height: 36,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 217, 217, 217),
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.history,
                       color: AppColors.secondaryColor,
-                      iconSize:
-                          32, // Ensure the button size matches the icon size
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      "Repeat a previous activity",
+                      style: TextStyle(
+                        color: AppColors.secondaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
               ),
-              Spacer(),
-              startActivityButton(screenWidth),
-              gapH16,
-              Container(
-                  width: (screenWidth - 2 * 59) * 0.8,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: const Color.fromARGB(255, 217, 217, 217),
-                        width: 1.0),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.history,
-                        color: AppColors.secondaryColor,
-                      ),
-                      SizedBox(width: 6),
-                      Text(
-                        "Repeat a previous activity",
-                        style: TextStyle(
-                            color: AppColors.secondaryColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  )),
-              Spacer(),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 22),
-                  child: Text(
-                    "Activities you might like",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-
-              gapH16,
-              recommendedActivitiesList(),
-              gapH48
-              // make two big text with different fonts tpo check if it works
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget recommendedActivitiesList() {
+  Widget _buildRecommendedActivitiesList() {
     return Column(
       children: [
         SizedBox(
-          height: 140, // Fixed height for the carousel items
+          height: 140,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: PageView.builder(
@@ -219,7 +172,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                   minParticipants: 3 + (index % 3),
                   onJoin: () {
-                    // Navigate to activity details for the selected activity
                     context.goNamed(AppRouting.activityDetails);
                   },
                 );
@@ -227,7 +179,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 16), // Space between carousel and indicators
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(recommendedActivities.length, (index) {
@@ -246,6 +198,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }),
         ),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 20, 22, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset("munich_logo.png"),
+                    IconButton(
+                      onPressed: () {
+                        // TODO: Implement navigation
+                      },
+                      icon: Image.asset("list_icon.png"),
+                      color: AppColors.secondaryColor,
+                      iconSize: 32,
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(flex: 3),
+              _buildStartActivityButton(screenWidth),
+              
+              const Spacer(flex: 2),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 22),
+                  child: Text(
+                    "Activities you might like",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              gapH8,
+              _buildRecommendedActivitiesList(),
+              gapH48,
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

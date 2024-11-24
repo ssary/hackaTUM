@@ -252,9 +252,10 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                   "Start Activity",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                       color: Colors.black,
-                      fontSize: 32),
+                      fontSize: 28
+                  ),
                 ),
               ],
             ),
@@ -276,7 +277,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                   child: Text(
                     "Popular activities",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -301,7 +302,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                   child: Text(
                     "Events near you",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -321,7 +322,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                   child: Text(
                     "Something in mind?",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -373,9 +374,10 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                   "Select a Location",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                       color: Colors.black,
-                      fontSize: 32),
+                      fontSize: 28
+                    ),
                 ),
               ],
             ),

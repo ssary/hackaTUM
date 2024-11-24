@@ -35,6 +35,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 24, 16, 18),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IconButton(
                     onPressed: () => {
@@ -53,9 +54,10 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                     "Your Activity",
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 32),
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black,
+                      fontSize: 28
+                    ),
                   ),
                 ],
               ),
@@ -131,7 +133,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   ),
                   const ChatMessage(
                     isSender: true,
-                    text: 'Hey, schnitte',
+                    text: 'Hey, was geht?',
                     name: 'You',
                     messageTimestamp: '15:34',
                     imageURL: 'user.png',

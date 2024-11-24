@@ -47,9 +47,10 @@ class _ChooseWhoWidgetState extends State<ChooseWhoWidget> {
                       "Select Group Size",
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 32),
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black,
+                      fontSize: 28
+                    ),
                     ),
                   ],
                 ),
