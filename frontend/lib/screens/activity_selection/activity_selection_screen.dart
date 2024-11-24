@@ -265,12 +265,19 @@ class _ActivitySelectionScreenState
         await ref.read(currentActivityProvider.notifier).loadActivities(
               id,
             );
+
     print("Loaded activities ${activities}");
+// check if the userID is in the participants list
+    final userActivities = activities.where((element) {
+      return !element["joinedUsers"].contains(uid);
+    }).toList();
+
+    print("User activities: $userActivities");
 
     setState(() {
       currentRequest = ref.read(currentActivityProvider)!;
     });
 
-    return activities.map((e) => ActivityModel.fromJson(e)).toList();
+    return userActivities.map((e) => ActivityModel.fromJson(e)).toList();
   }
 }

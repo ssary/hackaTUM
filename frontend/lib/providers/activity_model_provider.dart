@@ -118,6 +118,8 @@ class CurrentActivityNotifier extends StateNotifier<ActivityModel?> {
   Future<String?> postActivity(String createdBy, ActivityModel activity) async {
     // Replace with your actual endpoint URL
     try {
+      print(activity.toJson());
+      print('$baseUrl/activity/?created_by=$createdBy');
       // Make the POST request
       final response = await httpreq.post(
         Uri.parse('$baseUrl/activity/?created_by=$createdBy'),
