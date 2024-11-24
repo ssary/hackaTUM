@@ -68,14 +68,15 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 16, 22, 16),
             child: CollapsablePendingActivityRequest(
-                title: "Frisbee in the Park",
-                location: "Luitpoldpark",
-                startTime: "15:00",
-                endTime: "17:00",
-                minParticipants: 2,
-                maxParticipants: 4,
-                includeOpenButton: false,
-                onOpen: () => {}),
+              title: "Frisbee in the Park",
+              location: "Luitpoldpark",
+              startTime: "15:00",
+              endTime: "17:00",
+              minParticipants: 2,
+              maxParticipants: 4,
+              includeOpenButton: false,
+              onOpen: () => {}
+            ),
           ),
           Container(
             color: const Color.fromARGB(255, 217, 217, 217),
@@ -107,13 +108,14 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
               child: Text(
                 "Chat",
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
             ),
           ),
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(30, 22, 30, 50),
@@ -127,13 +129,21 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                     messageTimestamp: '15:21',
                     imageURL: 'user.png',
                   ),
+                  const ChatMessage(
+                    isSender: true,
+                    text: 'Hey, schnitte',
+                    name: 'You',
+                    messageTimestamp: '15:34',
+                    imageURL: 'user.png',
+                  ),
+                  SizedBox(height: 16),
                   SizedBox(
                     height: 40,
                     child: Row(
                       children: [
                         SizedBox(
                           height: 40,
-                          width: screenWidth - 50 - 40 - 10,
+                          width: screenWidth - 50 - 40 - 20,
                           child: FreeTextInputBox(
                               textEditingController: TextEditingController(),
                               hintText: "Chat with the group..."),

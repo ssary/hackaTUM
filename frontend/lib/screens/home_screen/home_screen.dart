@@ -195,7 +195,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Column(
       children: [
         SizedBox(
-          height: 132, // Fixed height for the carousel items
+          height: 140, // Fixed height for the carousel items
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: PageView.builder(

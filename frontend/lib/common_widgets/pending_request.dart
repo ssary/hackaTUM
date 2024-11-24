@@ -125,8 +125,9 @@ class _CollapsablePendingActivityRequestState
 
   @override
   Widget build(BuildContext context) {
-    TextStyle subtitleStyle = const TextStyle(
-      fontSize: 12,
+    TextStyle subtitleStyle =const  TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +145,7 @@ class _CollapsablePendingActivityRequestState
                 widget.title,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
+                  fontSize: 20.0,
                 ),
               ),
               IconButton(
@@ -169,7 +170,7 @@ class _CollapsablePendingActivityRequestState
                 children: [
                   const Icon(
                     Icons.location_pin,
-                    size: 16.0,
+                    size: 18.0,
                   ),
                   const SizedBox(width: 4.0),
                   Text(
@@ -177,8 +178,8 @@ class _CollapsablePendingActivityRequestState
                         ? '${widget.location.substring(0, 30)}...'
                         : widget.location,
                     overflow: TextOverflow.ellipsis,
-                    style: subtitleStyle,
-                  ),
+                    style: subtitleStyle
+                  )
                 ],
               ),
               const SizedBox(height: 6.0),
@@ -186,7 +187,7 @@ class _CollapsablePendingActivityRequestState
                 children: [
                   const Icon(
                     Icons.access_time,
-                    size: 16.0,
+                    size: 18.0,
                   ),
                   const SizedBox(width: 4.0),
                   Text('${widget.startTime} - ${widget.endTime}',

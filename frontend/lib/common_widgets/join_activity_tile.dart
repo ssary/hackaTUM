@@ -21,8 +21,8 @@ class JoinActivityTile extends StatelessWidget {
     required this.onJoin,
   }) : super(key: key);
 
-  final double _avatarSize = 18.0;
-  final double _avatarImageSize = 16.0;
+  final double _avatarSize = 22.0;
+  final double _avatarImageSize = 20.0;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class JoinActivityTile extends StatelessWidget {
                       fontSize: 16.0,
                     ),
                   ),
-                  const SizedBox(height: 2.0),
+                  const SizedBox(height: 4.0),
                   Row(
                     children: [
                       const Icon(
@@ -66,7 +66,7 @@ class JoinActivityTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6.0),
+                  const SizedBox(height: 8.0),
                   Row(
                     children: [
                       const Icon(
@@ -77,8 +77,8 @@ class JoinActivityTile extends StatelessWidget {
                       Text('$startTime - $endTime', style: subtitleStyle),
                     ],
                   ),
-                  const SizedBox(height: 6.0),
-                  SizedBox(
+                  const SizedBox(height: 8.0),
+                  Container(
                     height: _avatarSize,
                     child: Row(
                       children: [
@@ -94,7 +94,7 @@ class JoinActivityTile extends StatelessWidget {
                                 left: (userProfilePicturePaths.length -
                                         index -
                                         1) *
-                                    _avatarImageSize,
+                                    _avatarImageSize * 0.8,
                                 child: CircleAvatar(
                                   radius: _avatarSize / 2,
                                   backgroundColor: AppColors.surfaceColor,
@@ -117,8 +117,7 @@ class JoinActivityTile extends StatelessWidget {
                         ),
                       ],
                     ),
-                  )
-                ],
+                  )],
               ),
             ),
             GestureDetector(
