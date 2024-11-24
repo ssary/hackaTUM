@@ -12,7 +12,7 @@ async def get_available_activities():
     current_time = datetime.now()
     available_activities = []
 
-    async for activity in activity_collection.find():
+    for activity in activity_collection.find():
         end_time = activity["timerange"]["endTime"]
 
         if (
