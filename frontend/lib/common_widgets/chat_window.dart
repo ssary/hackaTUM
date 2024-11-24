@@ -7,13 +7,15 @@ class ChatMessage extends StatelessWidget {
       required this.text,
       required this.name,
       required this.messageTimestamp,
-      required this.imageURL});
+      required this.imageURL,
+      required this.isSender});
   final String text;
   final String name;
   final String messageTimestamp;
   final String imageURL;
+  final bool isSender;
 
-  Widget getContextRow(bool isSender) {
+  Widget getContextRow() {
     List<Widget> items = [
       Text(
         messageTimestamp,
@@ -42,7 +44,7 @@ class ChatMessage extends StatelessWidget {
     );
   }
 
-  Widget getMessage(bool isSender) {
+  Widget getMessage() {
     return Container(
       decoration: BoxDecoration(
         color: isSender
@@ -64,18 +66,17 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isSender = false;
     return Container(
         margin: const EdgeInsets.all(6.0),
         child: Column(
           crossAxisAlignment:
               isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            getContextRow(isSender),
+            getContextRow(),
             const SizedBox(
               height: 6,
             ),
-            getMessage(isSender)
+            getMessage()
           ],
         ));
   }

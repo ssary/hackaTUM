@@ -37,7 +37,9 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () => {},
+                    onPressed: () => {
+                      context.go(AppRouting.home)
+                    },
                     icon: const Icon(
                       Icons.arrow_back_outlined,
                       color: Colors.black,
@@ -112,24 +114,51 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(30, 22, 0, 15),
-            child: Column(
-              children: [
-                const ChatMessage(
-                  text: 'Hey, lol',
-                  name: 'Hans',
-                  messageTimestamp: '15:21',
-                  imageURL: 'user.png',
-                ),
-                Column(
-                  children: [
-                    FreeTextInputBox(
-                        textEditingController: TextEditingController(),
-                        hintText: "Chat with the group..."),
-                  ],
-                ),
-              ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(30, 22, 30, 50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const ChatMessage(
+                    isSender: false,
+                    text: 'Hey, lol',
+                    name: 'Hans',
+                    messageTimestamp: '15:21',
+                    imageURL: 'user.png',
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 40,
+                          width: screenWidth - 50 - 40 - 10,
+                          child: FreeTextInputBox(
+                              textEditingController: TextEditingController(),
+                              hintText: "Chat with the group..."),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            onPressed: () => {},
+                            icon: const Icon(Icons.arrow_forward,
+                                color: AppColors.secondaryColor),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],

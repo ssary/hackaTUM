@@ -74,6 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 color: Color.fromARGB(255, 217, 217, 217), width: 1.0),
             borderRadius: BorderRadius.circular(16.0),
           ),
+          elevation: 0,
           child: Stack(alignment: Alignment.center, children: [
             Positioned(
                 bottom: 0,
@@ -135,7 +136,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
-              gapH104,
+              Spacer(),
               startActivityButton(screenWidth),
               gapH16,
               Container(
@@ -164,7 +165,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ],
                   )),
-              gapH72,
+              Spacer(),
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
@@ -181,7 +182,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               gapH16,
               recommendedActivitiesList(),
-
+              gapH48
               // make two big text with different fonts tpo check if it works
             ],
           ),

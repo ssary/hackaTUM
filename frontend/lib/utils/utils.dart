@@ -29,5 +29,8 @@ Future<String> getDeviceId() async {
   var bytes = utf8.encode(deviceID);
   var digest = sha256.convert(bytes);
 
+  print(digest.toString());
+  print(deviceID);
+
   return digest.toString();
 }

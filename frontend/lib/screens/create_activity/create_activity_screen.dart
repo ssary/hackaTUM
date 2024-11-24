@@ -57,10 +57,22 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   ];
 
   final popularEventsList = [
-    "Christmas Market",
-    "New Year's Eve Party",
-    "Karaoke Night",
-    "Open Mic Night",
+    {
+      "name": "Christmas Market",
+      "imgUrl": "https://example.com/images/christmas_market.jpg",
+    },
+    {
+      "name": "New Year's Eve Party",
+      "imgUrl": "https://example.com/images/new_year_party.jpg",
+    },
+    {
+      "name": "Karaoke Night",
+      "imgUrl": "https://example.com/images/karaoke_night.jpg",
+    },
+    {
+      "name": "Open Mic Night",
+      "imgUrl": "https://example.com/images/open_mic_night.jpg",
+    },
   ];
 
   int currentIndex = 0;
@@ -131,9 +143,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 child: ElevatedButton(
               onPressed: () async {
                 if (currentIndex == 0) {
-                  if (_whatController.text.isNotEmpty) {
-                    context.go(AppRouting.home);
-                  } else {
+                  if (_whatController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content:
@@ -228,7 +238,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => context.go(AppRouting.home),
                   icon: const Icon(
                     Icons.arrow_back_outlined,
                     color: Colors.black,
@@ -343,7 +353,13 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    _pageController.animateToPage(
+                      currentIndex - 1,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    )
+                  },
                   icon: const Icon(
                     Icons.arrow_back_outlined,
                     color: Colors.black,
@@ -489,9 +505,10 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
         ),
         itemCount: popularEventsList.length,
         itemBuilder: (context, index) {
+          final event = popularEventsList[index];
           return GestureDetector(
               onTap: () {
-                _whatController.text = popularEventsList[index];
+                _whatController.text = event["name"]!;
                 _pageController.animateToPage(
                   currentIndex + 1,
                   duration: const Duration(milliseconds: 500),
@@ -499,12 +516,27 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 );
               },
               child: EventTile(
-                imgPath: 'event_image.png',
-                title: popularEventsList[index],
+                imgPath: event["imgUrl"]!,
+                title: event["name"]!,
               ));
         },
       )
     ]);
+  }
+
+  Future<String?> getLocationName(double latitude, double longitude) async {
+    final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1');
+    final response = await httpreq.get(url, headers: {
+      'User-Agent': 'Flutter App',
+    });
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['display_name']; // Full location name
+    } else {
+      return null; // Handle error appropriately
+    }
   }
 }
 

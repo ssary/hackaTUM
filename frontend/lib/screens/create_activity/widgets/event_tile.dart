@@ -35,11 +35,12 @@ class EventTile extends StatelessWidget {
                   topLeft: Radius.circular(8.0),
                   topRight: Radius.circular(8.0),
                 ),
-                child: Image.asset(
+                child: Image.network(
                   imgPath,
                   height: imgHeight,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error)
                 ),
               ),
             ),
