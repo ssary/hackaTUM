@@ -80,24 +80,40 @@ class _ActivitySelectionScreenState
     return Scaffold(
       body: Center(
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Title
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(22, 26, 16, 16),
-              child: Text(
-                "Your Request",
-                textAlign: TextAlign.left,
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold, color: Colors.black),
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 18),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => {},
+                    icon: const Icon(
+                      Icons.arrow_back_outlined,
+                      color: Colors.black,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  const Text(
+                    "Your Request",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                        fontSize: 28),
+                  ),
+                ],
               ),
             ),
           ),
           Container(
-            color: Colors.grey,
+            color: const Color.fromARGB(255, 217, 217, 217),
             height: 1,
           ),
           Padding(
@@ -181,33 +197,7 @@ class _ActivitySelectionScreenState
                     );
                   }
                 }),
-          ),
-          gapH16,
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 24),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: Container(
-                  width: 58,
-                  height: 58,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back_outlined,
-                    color: AppColors.secondaryColor,
-                    size: 32,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          gapH32
+          )
         ],
       )),
     );
