@@ -75,7 +75,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
     },
   ];
 
-
   int currentIndex = 0;
   late PageController _pageController;
 
@@ -158,10 +157,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 if (currentIndex == 3) {
                   if (_formKey.currentState!.validate()) {
                     // Get location name from lat/lon
-                    String name = await getLocationName(
-                            _selectedLocation!.latitude,
-                            _selectedLocation!.longitude) ??
-                        "Unknown Location";
 
                     // Create the activity using the provider
                     final activity = ActivityModel(
@@ -175,7 +170,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                       location: {
                         "lat": _selectedLocation!.latitude,
                         "lon": _selectedLocation!.longitude,
-                        "name": name,
                         "radius": _selectedRadius,
                       },
                       participants: [],
@@ -499,37 +493,36 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   }
 
   Widget recommendedEventsWidget() {
-  return Column(children: [
-    GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Two items per row
-        crossAxisSpacing: 12.0, // Spacing between items horizontally
-        mainAxisSpacing: 12.0, // Spacing between items vertically
-        mainAxisExtent: 99.0, // Fixed height of each item
-      ),
-      itemCount: popularEventsList.length,
-      itemBuilder: (context, index) {
-        final event = popularEventsList[index];
-        return GestureDetector(
-            onTap: () {
-              _whatController.text = event["name"]!;
-              _pageController.animateToPage(
-                currentIndex + 1,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-              );
-            },
-            child: EventTile(
-              imgPath: event["imgUrl"]!,
-              title: event["name"]!,
-            ));
-      },
-    )
-  ]);
-}
-
+    return Column(children: [
+      GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Two items per row
+          crossAxisSpacing: 12.0, // Spacing between items horizontally
+          mainAxisSpacing: 12.0, // Spacing between items vertically
+          mainAxisExtent: 99.0, // Fixed height of each item
+        ),
+        itemCount: popularEventsList.length,
+        itemBuilder: (context, index) {
+          final event = popularEventsList[index];
+          return GestureDetector(
+              onTap: () {
+                _whatController.text = event["name"]!;
+                _pageController.animateToPage(
+                  currentIndex + 1,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: EventTile(
+                imgPath: event["imgUrl"]!,
+                title: event["name"]!,
+              ));
+        },
+      )
+    ]);
+  }
 
   Future<String?> getLocationName(double latitude, double longitude) async {
     final url = Uri.parse(

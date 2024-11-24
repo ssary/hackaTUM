@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/common_widgets/join_activity_tile.dart';
@@ -6,7 +8,7 @@ import 'package:frontend/constants/app_spacing.dart';
 import 'package:frontend/data/models/activity_model.dart';
 import 'package:frontend/providers/activity_model_provider.dart';
 import 'package:frontend/providers/user_provider.dart';
-
+import 'package:http/http.dart' as httpreq;
 import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/common_widgets/pending_request.dart';
 import 'package:frontend/theme/colors.dart';
@@ -150,7 +152,7 @@ class _ActivitySelectionScreenState
                     return ListView.builder(
                       shrinkWrap: true,
                       padding: const EdgeInsets.all(4),
-                      itemCount: 3,
+                      itemCount: activties.length,
                       itemBuilder: (context, index) {
                         //dynamic activity = activties[index];
                         ActivityModel activity = activties[index];
@@ -208,7 +210,29 @@ class _ActivitySelectionScreenState
     );
   }
 
+  Future<String?> getLocationName(double latitude, double longitude) async {
+    final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1');
+    final response = await httpreq.get(url, headers: {
+      'User-Agent': 'Flutter App',
+    });
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['display_name']; // Full location name
+    } else {
+      return null; // Handle error appropriately
+    }
+  }
+
   Future<List<ActivityModel>> loadActivities(String uid) async {
+    String name = await getLocationName(widget.activityModel!.location["lat"],
+            widget.activityModel!.location["lon"]) ??
+        "Unknown Location";
+
+    // upadte the location name
+    widget.activityModel!.location["name"] = name;
+
     // upload the newlly created activity
     String id = await ref
         .read(currentActivityProvider.notifier)
@@ -219,6 +243,11 @@ class _ActivitySelectionScreenState
         await ref.read(currentActivityProvider.notifier).loadActivities(
               id,
             );
+    print("Loaded activities ${activities}");
+
+    setState(() {
+      currentRequest = ref.read(currentActivityProvider)!;
+    });
 
     return activities.map((e) => ActivityModel.fromJson(e)).toList();
   }
