@@ -348,7 +348,13 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    _pageController.animateToPage(
+                      currentIndex - 1,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    )
+                  },
                   icon: const Icon(
                     Icons.arrow_back_outlined,
                     color: Colors.black,
