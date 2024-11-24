@@ -207,6 +207,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
+
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(

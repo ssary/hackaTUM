@@ -35,8 +35,7 @@ class _ActivitySelectionScreenState
   void initState() {
     super.initState(); // Always call super first.
     Future(() {
-      String uid = ref.read(userProvider)!.uid;
-      _loadActivties = loadActivities(uid);
+      _loadActivties = loadActivities();
     });
   }
 
@@ -228,8 +227,15 @@ class _ActivitySelectionScreenState
     }
   }
 
-  Future<List<ActivityModel>> loadActivities(String uid) async {
-    print("Loading activities using current request ${uid}");
+  Future<List<ActivityModel>> loadActivities() async {
+    // check if the user is logged in
+    if (ref.read(userProvider) == null) {
+      await ref.read(userProvider.notifier).initializeUser();
+    }
+
+    String uid = ref.read(userProvider)!.uid;
+
+    print("Loading activities using current user ${uid}");
     print("Loading activities using current request ${widget.activityModel}");
     String? id;
     if (widget.activityModel != null) {

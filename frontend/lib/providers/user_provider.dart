@@ -14,16 +14,13 @@ class UserNotifier extends StateNotifier<UserModel?> {
 
   Future<void> initializeUser() async {
     final deviceId = await getDeviceId();
-    var user = await _userService.getCachedUser();
 
-    if (user == null) {
-      // Load user from API or create if not found
-      user = await _userService.loadUser(deviceId) ??
-          await _userService.createUser(deviceId);
+    // Load user from API or create if not found
+    var user = await _userService.loadUser(deviceId) ??
+        await _userService.createUser(deviceId);
 
-      if (user != null) {
-        await _userService.cacheUser(user);
-      }
+    if (user != null) {
+      await _userService.cacheUser(user);
     }
 
     state = user;
