@@ -13,6 +13,7 @@ import 'package:frontend/routing/app_routing.dart';
 import 'package:frontend/common_widgets/pending_request.dart';
 import 'package:frontend/theme/colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ActivitySelectionScreen extends ConsumerStatefulWidget {
   ActivityModel? activityModel;
@@ -111,7 +112,8 @@ class _ActivitySelectionScreenState
               maxParticipants: currentRequest!.maxParticipants,
               onOpen: () {
                 // Navigate to activity details for the selected activity
-                context.goNamed(AppRouting.activityDetails);
+                context
+                    .go("${AppRouting.activityDetails}/${currentRequest!.id}");
               },
             ),
           ),
@@ -171,7 +173,8 @@ class _ActivitySelectionScreenState
                           minParticipants: activity.minParticipants,
                           onJoin: () {
                             // Navigate to activity details for the selected activity
-                            context.goNamed(AppRouting.activityDetails);
+                            context.go(
+                                "${AppRouting.activityDetails}/${activity.id}");
                           },
                         );
                       },
@@ -226,18 +229,37 @@ class _ActivitySelectionScreenState
   }
 
   Future<List<ActivityModel>> loadActivities(String uid) async {
-    String name = await getLocationName(widget.activityModel!.location["lat"],
-            widget.activityModel!.location["lon"]) ??
-        "Unknown Location";
+    print("Loading activities using current request ${uid}");
+    print("Loading activities using current request ${widget.activityModel}");
+    String? id;
+    if (widget.activityModel != null) {
+      String name = await getLocationName(widget.activityModel!.location["lat"],
+              widget.activityModel!.location["lon"]) ??
+          "Unknown Location";
 
-    // upadte the location name
-    widget.activityModel!.location["name"] = name;
+      // upadte the location name
+      widget.activityModel!.location["name"] = name;
 
-    // upload the newlly created activity
-    String id = await ref
-        .read(currentActivityProvider.notifier)
-        .addActivity(widget.activityModel!, uid);
+      // upload the newlly created activity
+      id = await ref
+          .read(currentActivityProvider.notifier)
+          .addActivity(widget.activityModel!, uid);
 
+      // upload the newlly created activity id to shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("currentActivityId", id);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      id = prefs.getString("currentActivityId");
+
+      if (id == null) {
+        return [];
+      }
+      currentRequest = await ref
+          .read(currentActivityProvider.notifier)
+          .loadActivityFromID(id);
+      ref.read(currentActivityProvider.notifier).setActivity(currentRequest!);
+    }
     print("Loading activities using current request ${id}");
     List<dynamic> activities =
         await ref.read(currentActivityProvider.notifier).loadActivities(

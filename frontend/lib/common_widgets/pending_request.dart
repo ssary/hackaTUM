@@ -121,14 +121,12 @@ class CollapsablePendingActivityRequest extends StatefulWidget {
 
 class _CollapsablePendingActivityRequestState
     extends State<CollapsablePendingActivityRequest> {
-  bool _expanded = false;
+  bool _expanded = true;
 
   @override
   Widget build(BuildContext context) {
-    TextStyle subtitleStyle =const  TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500
-    );
+    TextStyle subtitleStyle =
+        const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -174,12 +172,11 @@ class _CollapsablePendingActivityRequestState
                   ),
                   const SizedBox(width: 4.0),
                   Text(
-                    widget.location.length > 30
-                        ? '${widget.location.substring(0, 30)}...'
-                        : widget.location,
-                    overflow: TextOverflow.ellipsis,
-                    style: subtitleStyle
-                  )
+                      widget.location.length > 30
+                          ? '${widget.location.substring(0, 30)}...'
+                          : widget.location,
+                      overflow: TextOverflow.ellipsis,
+                      style: subtitleStyle)
                 ],
               ),
               const SizedBox(height: 6.0),

@@ -36,16 +36,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       await ref.read(userProvider.notifier).initializeUser();
     });
 
-    _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
-      if (_pageController.hasClients) {
-        final nextPage = (_pageController.page?.toInt() ?? 0) + 1;
-        _pageController.animateToPage(
-          nextPage % recommendedActivities.length,
-          duration: const Duration(milliseconds: 800),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
+    if (_pageController.hasClients && _pageController.page != null) {
+      _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
+        if (_pageController.hasClients) {
+          final nextPage = (_pageController.page?.toInt() ?? 0) + 1;
+          _pageController.animateToPage(
+            nextPage % recommendedActivities.length,
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -101,7 +103,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Icon(Icons.arrow_forward_ios, color: AppColors.primaryColor),
+                        Icon(Icons.arrow_forward_ios,
+                            color: AppColors.primaryColor),
                       ],
                     ),
                   ),
@@ -230,7 +233,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const Spacer(flex: 3),
               _buildStartActivityButton(screenWidth),
-              
               const Spacer(flex: 2),
               const Align(
                 alignment: Alignment.centerLeft,

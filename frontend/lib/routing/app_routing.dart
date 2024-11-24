@@ -35,20 +35,27 @@ class AppRouting {
               name: selectActivity,
               path: selectActivity,
               builder: (context, state) {
+                if (state.extra == null) {
+                  return ActivitySelectionScreen();
+                }
+
                 try {
                   final activityModel = state.extra as ActivityModel;
                   return ActivitySelectionScreen(activityModel: activityModel);
                 } on Exception catch (e) {
                   print(e);
-                  return const ActivityDetailsScreen();
+                  return ActivitySelectionScreen();
                 }
               },
             ),
             GoRoute(
-              name: activityDetails,
-              path: activityDetails,
-              builder: (context, state) => const ActivityDetailsScreen(),
-            )
+                name: activityDetails,
+                path: '$activityDetails/:id',
+                builder: (context, state) {
+                  // get id from pathParameters
+                  final id = state.pathParameters['id'];
+                  return ActivityDetailsScreen(activityID: id!);
+                })
           ])
     ],
   );

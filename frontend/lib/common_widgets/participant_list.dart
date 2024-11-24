@@ -54,7 +54,7 @@ class ParticipantRowItem extends StatelessWidget {
 }
 
 class CollapsableParticipantList extends StatefulWidget {
-  final List<ActivityParticipant> participants;
+  final List participants;
   final int denominator;
 
   const CollapsableParticipantList({
@@ -71,6 +71,20 @@ class CollapsableParticipantList extends StatefulWidget {
 class _CollapsableParticipantListState
     extends State<CollapsableParticipantList> {
   bool _expanded = false;
+  List<ActivityParticipant> participants = [];
+
+  @override
+  void initState() {
+    for (var participant in widget.participants) {
+      participants.add(ActivityParticipant(
+        name: participant['name'],
+        gender: participant['gender'],
+        pfpUrl: "user.png",
+        age: participant['age'],
+      ));
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +101,7 @@ class _CollapsableParticipantListState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'People joined (${widget.participants.length}/${widget.denominator})',
+                'People joined (${participants.length}/${widget.denominator})',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20.0,
@@ -108,7 +122,7 @@ class _CollapsableParticipantListState
         ),
         if (_expanded)
           Column(
-            children: widget.participants
+            children: participants
                 .map((participant) =>
                     ParticipantRowItem(participant: participant))
                 .toList(),

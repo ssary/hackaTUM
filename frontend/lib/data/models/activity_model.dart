@@ -7,7 +7,7 @@ class ActivityModel {
   final Map<String, TimeOfDay> timeRange;
   final int minParticipants;
   final int maxParticipants;
-  final List<String> participants;
+  final List<dynamic> participants;
 
   ActivityModel({
     this.id,
@@ -33,7 +33,7 @@ class ActivityModel {
       timeRange: timeRange,
       minParticipants: json['minUsers'] as int,
       maxParticipants: json['maxUsers'] as int,
-      participants: List<String>.from(json['joinedUsers'] as List<dynamic>),
+      participants: List<dynamic>.from(json['joinedUsers'] as List<dynamic>),
     );
   }
 

@@ -56,6 +56,65 @@ class CurrentActivityNotifier extends StateNotifier<ActivityModel?> {
     }
   }
 
+  Future<ActivityModel> loadActivityFromID(String id) async {
+    try {
+      final response = await httpreq.get(Uri.parse('$baseUrl/activity/$id'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        return ActivityModel.fromJson(data);
+      } else {
+        print('Error loading activity: ${response.body}');
+        return ActivityModel(
+          description: 'Error loading activity',
+          location: {},
+          timeRange: {},
+          minParticipants: 0,
+          maxParticipants: 0,
+          participants: [],
+        );
+      }
+    } catch (e) {
+      print('Error loading activity2: $e');
+      return ActivityModel(
+        description: 'Error loading activity',
+        location: {},
+        timeRange: {},
+        minParticipants: 0,
+        maxParticipants: 0,
+        participants: [],
+      );
+    }
+  }
+
+  Future<bool> joinActivity(ActivityModel activityModel, String userID) async {
+    // Replace with your actual endpoint URL
+    try {
+      // Make the POST request
+      final response = await httpreq.post(
+        Uri.parse('$baseUrl/activity/${activityModel.id}/addUser/$userID'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(activityModel.toJson()),
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        print('Activity joined successfully: ${response.body}');
+        return true;
+      } else {
+        print('Failed to join activity. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error occurred while joining activity: $e');
+      return false;
+    }
+  }
+
   Future<String?> postActivity(String createdBy, ActivityModel activity) async {
     // Replace with your actual endpoint URL
     try {
