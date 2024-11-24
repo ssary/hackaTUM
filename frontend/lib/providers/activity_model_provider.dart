@@ -91,9 +91,10 @@ class CurrentActivityNotifier extends StateNotifier<ActivityModel?> {
   Future<bool> joinActivity(ActivityModel activityModel, String userID) async {
     // Replace with your actual endpoint URL
     try {
-      // Make the POST request
-      final response = await httpreq.post(
-        Uri.parse('$baseUrl/activity/${activityModel.id}/addUser/$userID'),
+      print('$baseUrl/activity/${activityModel.id}/add_user/$userID');
+      // Make the PUT request
+      final response = await httpreq.put(
+        Uri.parse('$baseUrl/activity/${activityModel.id}/add_user/$userID'),
         headers: {
           'Content-Type': 'application/json',
         },

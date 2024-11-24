@@ -201,7 +201,17 @@ class _ActivityDetailsScreenState extends ConsumerState<ActivityDetailsScreen> {
 
     try {
       // join the activity
+      print("Joining activity");
+      // check if the user is logged in
+      if (ref.read(userProvider) == null) {
+        await ref.read(userProvider.notifier).initializeUser();
+      }
+
       String userID = ref.read(userProvider)!.uid;
+
+      print("userID: $userID");
+      print("activityID: ${activity.id}");
+
       await ref
           .read(currentActivityProvider.notifier)
           .joinActivity(activity, userID);
