@@ -37,7 +37,9 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () => {},
+                    onPressed: () => {
+                      context.go(AppRouting.home)
+                    },
                     icon: const Icon(
                       Icons.arrow_back_outlined,
                       color: Colors.black,

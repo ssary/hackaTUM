@@ -30,6 +30,7 @@ class JoinActivityTile extends StatelessWidget {
       fontSize: 12,
     );
     return Card(
+      elevation: 0,
       shape: RoundedRectangleBorder(
         side: const BorderSide(
             color: Color.fromARGB(255, 217, 217, 217), width: 1.0),

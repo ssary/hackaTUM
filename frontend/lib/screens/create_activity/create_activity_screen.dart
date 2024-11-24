@@ -57,11 +57,24 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   ];
 
   final popularEventsList = [
-    "Christmas Market",
-    "New Year's Eve Party",
-    "Karaoke Night",
-    "Open Mic Night",
+    {
+      "name": "Christmas Market",
+      "imgUrl": "https://example.com/images/christmas_market.jpg",
+    },
+    {
+      "name": "New Year's Eve Party",
+      "imgUrl": "https://example.com/images/new_year_party.jpg",
+    },
+    {
+      "name": "Karaoke Night",
+      "imgUrl": "https://example.com/images/karaoke_night.jpg",
+    },
+    {
+      "name": "Open Mic Night",
+      "imgUrl": "https://example.com/images/open_mic_night.jpg",
+    },
   ];
+
 
   int currentIndex = 0;
   late PageController _pageController;
@@ -131,9 +144,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 child: ElevatedButton(
               onPressed: () async {
                 if (currentIndex == 0) {
-                  if (_whatController.text.isNotEmpty) {
-                    context.go(AppRouting.home);
-                  } else {
+                  if (_whatController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content:
@@ -233,7 +244,7 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => {},
+                  onPressed: () => context.go(AppRouting.home),
                   icon: const Icon(
                     Icons.arrow_back_outlined,
                     color: Colors.black,
@@ -488,35 +499,37 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
   }
 
   Widget recommendedEventsWidget() {
-    return Column(children: [
-      GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Two items per row
-          crossAxisSpacing: 12.0, // Spacing between items horizontally
-          mainAxisSpacing: 12.0, // Spacing between items vertically
-          mainAxisExtent: 99.0, // Fixed height of each item
-        ),
-        itemCount: popularEventsList.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-              onTap: () {
-                _whatController.text = popularEventsList[index];
-                _pageController.animateToPage(
-                  currentIndex + 1,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: EventTile(
-                imgPath: 'event_image.png',
-                title: popularEventsList[index],
-              ));
-        },
-      )
-    ]);
-  }
+  return Column(children: [
+    GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // Two items per row
+        crossAxisSpacing: 12.0, // Spacing between items horizontally
+        mainAxisSpacing: 12.0, // Spacing between items vertically
+        mainAxisExtent: 99.0, // Fixed height of each item
+      ),
+      itemCount: popularEventsList.length,
+      itemBuilder: (context, index) {
+        final event = popularEventsList[index];
+        return GestureDetector(
+            onTap: () {
+              _whatController.text = event["name"]!;
+              _pageController.animateToPage(
+                currentIndex + 1,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+              );
+            },
+            child: EventTile(
+              imgPath: event["imgUrl"]!,
+              title: event["name"]!,
+            ));
+      },
+    )
+  ]);
+}
+
 
   Future<String?> getLocationName(double latitude, double longitude) async {
     final url = Uri.parse(
