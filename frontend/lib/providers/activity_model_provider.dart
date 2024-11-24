@@ -42,7 +42,7 @@ class CurrentActivityNotifier extends StateNotifier<ActivityModel?> {
     try {
       final response =
           await httpreq.get(Uri.parse('$baseUrl/activity/$id/similar/?K=3'));
-      print("response: ${response.body}");
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return data;

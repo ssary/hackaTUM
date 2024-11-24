@@ -20,14 +20,20 @@ class ActivityModel {
   });
 
   factory ActivityModel.fromJson(Map<String, dynamic> json) {
+    Map<String, TimeOfDay> timeRange = {
+      'startTime': TimeOfDay.fromDateTime(
+          DateTime.parse(json['timerange']['startTime'])),
+      'endTime':
+          TimeOfDay.fromDateTime(DateTime.parse(json['timerange']['endTime'])),
+    };
     return ActivityModel(
       id: json['id'] as String,
       description: json['description'] as String,
       location: json['location'] as Map<String, dynamic>,
-      timeRange: json['timeRange'] as Map<String, TimeOfDay>,
-      minParticipants: json['minParticipants'] as int,
-      maxParticipants: json['maxParticipants'] as int,
-      participants: List<String>.from(json['participants'] as List<dynamic>),
+      timeRange: timeRange,
+      minParticipants: json['minUsers'] as int,
+      maxParticipants: json['maxUsers'] as int,
+      participants: List<String>.from(json['joinedUsers'] as List<dynamic>),
     );
   }
 
@@ -38,6 +44,7 @@ class ActivityModel {
         "lon": location['lon'],
         "lat": location['lat'],
         "radius": location['radius'],
+        "name": location['name'],
       },
       "timerange": {
         "startTime": parseTimeOfDayToUTC(timeRange['startTime']!),

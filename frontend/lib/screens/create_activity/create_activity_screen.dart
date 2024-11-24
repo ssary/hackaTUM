@@ -147,10 +147,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                 if (currentIndex == 3) {
                   if (_formKey.currentState!.validate()) {
                     // Get location name from lat/lon
-                    String name = await getLocationName(
-                            _selectedLocation!.latitude,
-                            _selectedLocation!.longitude) ??
-                        "Unknown Location";
 
                     // Create the activity using the provider
                     final activity = ActivityModel(
@@ -164,7 +160,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
                       location: {
                         "lat": _selectedLocation!.latitude,
                         "lon": _selectedLocation!.longitude,
-                        "name": name,
                         "radius": _selectedRadius,
                       },
                       participants: [],
@@ -510,21 +505,6 @@ class _CreateActivityScreenState extends ConsumerState<CreateActivityScreen> {
         },
       )
     ]);
-  }
-
-  Future<String?> getLocationName(double latitude, double longitude) async {
-    final url = Uri.parse(
-        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=18&addressdetails=1');
-    final response = await httpreq.get(url, headers: {
-      'User-Agent': 'Flutter App',
-    });
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['display_name']; // Full location name
-    } else {
-      return null; // Handle error appropriately
-    }
   }
 }
 
