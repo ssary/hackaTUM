@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from src.domain.models.user import UserModel
-
-# Timestamps: milliseconds since epoch
+from src.domain.models.message import MessageModel
 
 class ActivityLocation(BaseModel):
     lon: float
@@ -19,6 +18,7 @@ class ActivityModel(BaseModel):
     maxUsers: int
     timerange: ActivityTimerange
     location: ActivityLocation
-    joinedUsers: list[UserModel]
+    joinedUsers: list[UserModel] = []
+    messages: list[MessageModel] = []
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
